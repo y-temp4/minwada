@@ -1,14 +1,11 @@
 use axum::{
-    extract::{Path, State, Extension},
+    extract::{Extension, Path, State},
     http::StatusCode,
 };
 use sqlx::PgPool;
 use uuid::Uuid;
 
-use crate::{
-    error::AppError,
-    models::User,
-};
+use crate::{error::AppError, models::User};
 
 #[utoipa::path(
     delete,

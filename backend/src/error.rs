@@ -10,49 +10,49 @@ use thiserror::Error;
 pub enum AppError {
     #[error("Database error: {0}")]
     Database(#[from] sqlx::Error),
-    
+
     #[error("JWT error: {0}")]
     Jwt(#[from] jsonwebtoken::errors::Error),
-    
+
     #[error("Argon2 error: {0}")]
     Argon2(String),
-    
+
     #[error("OAuth error: {0}")]
     OAuth(String),
-    
+
     #[error("Validation error: {0}")]
     Validation(#[from] validator::ValidationErrors),
-    
+
     #[error("Authentication error: {0}")]
     Unauthorized(String),
-    
+
     #[error("Forbidden")]
     Forbidden,
-    
+
     #[error("Resource not found")]
     NotFound,
-    
+
     #[error("Conflict: {0}")]
     Conflict(String),
-    
+
     #[error("Bad request: {0}")]
     BadRequest(String),
-    
+
     #[error("Internal server error: {0}")]
     Internal(String),
-    
+
     #[error("Not implemented: {0}")]
     NotImplemented(String),
-    
+
     #[error("Configuration error: {0}")]
     Config(String),
-    
+
     #[error("Reqwest error: {0}")]
     Reqwest(#[from] reqwest::Error),
-    
+
     #[error("Serde JSON error: {0}")]
     SerdeJson(#[from] serde_json::Error),
-    
+
     #[error("UUID parse error: {0}")]
     UuidParse(#[from] uuid::Error),
 }
@@ -76,10 +76,16 @@ impl IntoResponse for AppError {
         let (status, error_message) = match self {
             AppError::Database(err) => {
                 tracing::error!("Database error: {:?}", err);
-                (StatusCode::INTERNAL_SERVER_ERROR, "Database error occurred".to_string())
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Database error occurred".to_string(),
+                )
             }
             AppError::Jwt(_) => (StatusCode::UNAUTHORIZED, "Invalid token".to_string()),
-            AppError::Argon2(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Password hashing error".to_string()),
+            AppError::Argon2(_) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Password hashing error".to_string(),
+            ),
             AppError::OAuth(ref msg) => (StatusCode::BAD_REQUEST, msg.clone()),
             AppError::Validation(ref errors) => {
                 let validation_errors: Vec<String> = errors
@@ -87,11 +93,18 @@ impl IntoResponse for AppError {
                     .iter()
                     .flat_map(|(field, errors)| {
                         errors.iter().map(move |error| {
-                            format!("{}: {}", field, error.message.as_ref().unwrap_or(&"Invalid value".into()))
+                            format!(
+                                "{}: {}",
+                                field,
+                                error.message.as_ref().unwrap_or(&"Invalid value".into())
+                            )
                         })
                     })
                     .collect();
-                (StatusCode::BAD_REQUEST, format!("Validation errors: {}", validation_errors.join(", ")))
+                (
+                    StatusCode::BAD_REQUEST,
+                    format!("Validation errors: {}", validation_errors.join(", ")),
+                )
             }
             AppError::Unauthorized(ref msg) => (StatusCode::UNAUTHORIZED, msg.clone()),
             AppError::Forbidden => (StatusCode::FORBIDDEN, "Forbidden".to_string()),
@@ -100,20 +113,32 @@ impl IntoResponse for AppError {
             AppError::BadRequest(ref msg) => (StatusCode::BAD_REQUEST, msg.clone()),
             AppError::Internal(ref msg) => {
                 tracing::error!("Internal error: {}", msg);
-                (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error".to_string())
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Internal server error".to_string(),
+                )
             }
             AppError::NotImplemented(ref msg) => (StatusCode::NOT_IMPLEMENTED, msg.clone()),
             AppError::Config(ref msg) => {
                 tracing::error!("Configuration error: {}", msg);
-                (StatusCode::INTERNAL_SERVER_ERROR, "Configuration error".to_string())
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Configuration error".to_string(),
+                )
             }
             AppError::Reqwest(ref err) => {
                 tracing::error!("HTTP client error: {:?}", err);
-                (StatusCode::INTERNAL_SERVER_ERROR, "External service error".to_string())
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "External service error".to_string(),
+                )
             }
             AppError::SerdeJson(ref err) => {
                 tracing::error!("JSON serialization error: {:?}", err);
-                (StatusCode::INTERNAL_SERVER_ERROR, "JSON processing error".to_string())
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "JSON processing error".to_string(),
+                )
             }
             AppError::UuidParse(ref err) => {
                 tracing::error!("UUID parse error: {:?}", err);
@@ -130,4 +155,4 @@ impl IntoResponse for AppError {
     }
 }
 
-pub type Result<T> = std::result::Result<T, AppError>; 
+pub type Result<T> = std::result::Result<T, AppError>;

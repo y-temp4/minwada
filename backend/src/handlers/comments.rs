@@ -256,10 +256,8 @@ pub async fn delete_comment(
 
 fn build_comment_tree(comments: Vec<CommentWithUser>) -> Vec<CommentResponse> {
     // 1. 最初にすべてのコメントをCommentResponseに変換
-    let mut all_comments: Vec<CommentResponse> = comments
-        .into_iter()
-        .map(|c| c.to_response())
-        .collect();
+    let mut all_comments: Vec<CommentResponse> =
+        comments.into_iter().map(|c| c.to_response()).collect();
 
     // 2. created_at順でソート（決定的な順序を保証）
     all_comments.sort_by(|a, b| a.created_at.cmp(&b.created_at));

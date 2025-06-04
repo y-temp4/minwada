@@ -1,18 +1,8 @@
-use axum::{
-    extract::State,
-    http::Request,
-    middleware::Next,
-    response::Response,
-};
 use axum::body::Body;
+use axum::{extract::State, http::Request, middleware::Next, response::Response};
 use sqlx::PgPool;
 
-use crate::{
-    auth::jwt::verify_jwt_token,
-    config::Config,
-    error::AppError,
-    models::User,
-};
+use crate::{auth::jwt::verify_jwt_token, config::Config, error::AppError, models::User};
 
 pub async fn auth_middleware(
     State(pool): State<PgPool>,
@@ -26,7 +16,9 @@ pub async fn auth_middleware(
         .get("Authorization")
         .and_then(|h| h.to_str().ok())
         .and_then(|h| h.strip_prefix("Bearer "))
-        .ok_or_else(|| AppError::Unauthorized("Missing or invalid Authorization header".to_string()))?;
+        .ok_or_else(|| {
+            AppError::Unauthorized("Missing or invalid Authorization header".to_string())
+        })?;
 
     // トークン検証
     let config = Config::from_env()?;

@@ -1,5 +1,5 @@
 use axum::{
-    extract::{Path, State, Extension},
+    extract::{Extension, Path, State},
     Json,
 };
 use sqlx::PgPool;
@@ -9,7 +9,7 @@ use validator::Validate;
 use crate::{
     error::AppError,
     models::{
-        threads::{UpdateThreadRequest, ThreadResponse, ThreadWithUser},
+        threads::{ThreadResponse, ThreadWithUser, UpdateThreadRequest},
         User,
     },
 };
@@ -44,7 +44,7 @@ pub async fn update_thread(
 
     // Check if thread exists and user owns it
     let existing_thread = sqlx::query_scalar::<_, bool>(
-        "SELECT EXISTS(SELECT 1 FROM threads WHERE id = $1 AND user_id = $2)"
+        "SELECT EXISTS(SELECT 1 FROM threads WHERE id = $1 AND user_id = $2)",
     )
     .bind(id)
     .bind(current_user.id)
@@ -68,7 +68,7 @@ pub async fn update_thread(
             content = COALESCE($3, content),
             updated_at = NOW()
         WHERE id = $1
-        "#
+        "#,
     )
     .bind(id)
     .bind(payload.title.as_ref())

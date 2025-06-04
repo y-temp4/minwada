@@ -1,5 +1,5 @@
 use axum::{
-    extract::{State, Extension},
+    extract::{Extension, State},
     response::Json,
 };
 use sqlx::PgPool;
@@ -57,7 +57,7 @@ pub async fn update_profile(
     // Check if username is taken by another user
     if let Some(ref username) = payload.username {
         let existing_user = sqlx::query_scalar::<_, i64>(
-            "SELECT COUNT(*) FROM users WHERE username = $1 AND id != $2"
+            "SELECT COUNT(*) FROM users WHERE username = $1 AND id != $2",
         )
         .bind(username)
         .bind(current_user.id)
@@ -69,7 +69,8 @@ pub async fn update_profile(
         }
     }
 
-    if payload.username.is_none() && payload.display_name.is_none() && payload.avatar_url.is_none() {
+    if payload.username.is_none() && payload.display_name.is_none() && payload.avatar_url.is_none()
+    {
         return Err(AppError::BadRequest("No fields to update".to_string()));
     }
 
@@ -84,7 +85,7 @@ pub async fn update_profile(
             updated_at = NOW()
         WHERE id = $1
         RETURNING *
-        "#
+        "#,
     )
     .bind(current_user.id)
     .bind(payload.username.as_ref())
@@ -94,4 +95,4 @@ pub async fn update_profile(
     .await?;
 
     Ok(Json(UserResponse::from(updated_user)))
-} 
+}

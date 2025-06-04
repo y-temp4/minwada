@@ -1,5 +1,5 @@
 use axum::{
-    extract::{State, Extension},
+    extract::{Extension, State},
     http::StatusCode,
     Json,
 };
@@ -45,7 +45,7 @@ pub async fn create_thread(
             id, title, content, created_at, updated_at,
             $1 as user_id, $4 as username, $5 as user_display_name, $6 as user_avatar_url,
             0::bigint as comment_count
-        "#
+        "#,
     )
     .bind(current_user.id)
     .bind(&payload.title)

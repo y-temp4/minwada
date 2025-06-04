@@ -71,7 +71,9 @@ pub async fn get_threads(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::handlers::threads::test_utils::{cleanup_test_data, create_second_thread, seed_test_data, setup_test_db};
+    use crate::handlers::threads::test_utils::{
+        cleanup_test_data, create_second_thread, seed_test_data, setup_test_db,
+    };
 
     #[tokio::test]
     async fn test_get_threads() {
@@ -113,11 +115,12 @@ mod tests {
 
         // 2つ目のテストスレッドを作成
         let thread_id2 = create_second_thread(
-            &pool, 
-            user_id1, 
-            "Second Test Thread", 
-            "This is another test thread content"
-        ).await;
+            &pool,
+            user_id1,
+            "Second Test Thread",
+            "This is another test thread content",
+        )
+        .await;
 
         // ページングテスト: リミット1で1ページ目を取得
         let query1 = ThreadQuery {

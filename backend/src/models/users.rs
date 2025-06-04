@@ -8,12 +8,16 @@ use validator::Validate;
 
 #[derive(Debug, Deserialize, Validate, ToSchema)]
 pub struct UpdateProfileRequest {
-    #[validate(length(min = 3, max = 50, message = "Username must be between 3 and 50 characters"))]
+    #[validate(length(
+        min = 3,
+        max = 50,
+        message = "Username must be between 3 and 50 characters"
+    ))]
     pub username: Option<String>,
-    
+
     #[validate(length(max = 100, message = "Display name must be less than 100 characters"))]
     pub display_name: Option<String>,
-    
+
     #[validate(url(message = "Avatar URL must be a valid URL"))]
     pub avatar_url: Option<String>,
 }
@@ -68,4 +72,4 @@ impl From<User> for PublicUserResponse {
             created_at: user.created_at,
         }
     }
-} 
+}

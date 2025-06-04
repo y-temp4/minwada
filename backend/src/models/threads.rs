@@ -10,18 +10,26 @@ use super::common::PaginatedResponse;
 
 #[derive(Debug, Deserialize, Validate, ToSchema)]
 pub struct CreateThreadRequest {
-    #[validate(length(min = 1, max = 300, message = "Title must be between 1 and 300 characters"))]
+    #[validate(length(
+        min = 1,
+        max = 300,
+        message = "Title must be between 1 and 300 characters"
+    ))]
     pub title: String,
-    
+
     #[validate(length(max = 10000, message = "Content must be less than 10000 characters"))]
     pub content: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Validate, ToSchema)]
 pub struct UpdateThreadRequest {
-    #[validate(length(min = 1, max = 300, message = "Title must be between 1 and 300 characters"))]
+    #[validate(length(
+        min = 1,
+        max = 300,
+        message = "Title must be between 1 and 300 characters"
+    ))]
     pub title: Option<String>,
-    
+
     #[validate(length(max = 10000, message = "Content must be less than 10000 characters"))]
     pub content: Option<String>,
 }
@@ -62,13 +70,13 @@ pub struct ThreadWithUser {
     pub content: Option<String>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
-    
+
     // User fields
     pub user_id: Uuid,
     pub username: String,
     pub user_display_name: Option<String>,
     pub user_avatar_url: Option<String>,
-    
+
     // Comment count
     pub comment_count: Option<i64>,
 }
@@ -90,4 +98,4 @@ impl From<ThreadWithUser> for ThreadResponse {
             comment_count: thread.comment_count.unwrap_or(0) as u64,
         }
     }
-} 
+}
