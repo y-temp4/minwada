@@ -17,18 +17,12 @@ use axum::{
     Router,
 };
 use tower::ServiceBuilder;
-use tower_http::{
-    cors::CorsLayer,
-    trace::TraceLayer,
-};
+use tower_http::{cors::CorsLayer, trace::TraceLayer};
 use tracing::{info, Level};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
-use crate::{
-    config::Config,
-    routes::create_routes,
-};
+use crate::{config::Config, routes::create_routes};
 
 #[derive(OpenApi)]
 #[openapi(
@@ -40,20 +34,20 @@ use crate::{
         handlers::auth::refresh_token,
         handlers::auth::google_auth,
         handlers::auth::google_callback,
-        
+
         // Thread endpoints
-        handlers::threads::get_threads,
-        handlers::threads::create_thread,
-        handlers::threads::get_thread,
-        handlers::threads::update_thread,
-        handlers::threads::delete_thread,
-        
+        handlers::threads::list::get_threads,
+        handlers::threads::create::create_thread,
+        handlers::threads::detail::get_thread,
+        handlers::threads::update::update_thread,
+        handlers::threads::delete::delete_thread,
+
         // Comment endpoints
         handlers::comments::get_comments,
         handlers::comments::create_comment,
         handlers::comments::update_comment,
         handlers::comments::delete_comment,
-        
+
         // User endpoints
         handlers::users::get_current_user,
         handlers::users::update_profile,
@@ -66,25 +60,25 @@ use crate::{
             models::auth::LogoutResponse,
             models::auth::AuthResponse,
             models::auth::RefreshTokenRequest,
-            
+
             // Thread DTOs
             models::threads::CreateThreadRequest,
             models::threads::UpdateThreadRequest,
             models::threads::ThreadResponse,
             models::threads::ThreadListResponse,
             models::threads::ThreadUser,
-            
+
             // Comment DTOs
             models::comments::CreateCommentRequest,
             models::comments::UpdateCommentRequest,
             models::comments::CommentResponse,
             models::comments::CommentUser,
             models::comments::CommentListResponse,
-            
+
             // User DTOs
             models::users::UserResponse,
             models::users::UpdateProfileRequest,
-            
+
             // Common DTOs
             models::common::ErrorResponse,
         )
@@ -112,17 +106,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Load configuration
     let config = Config::from_env()?;
-    
+
     info!("Starting Reddit Clone API server");
     info!("Database URL: {}", config.database_url);
     info!("Server will run on {}:{}", config.host, config.port);
 
     // Database connection
     let pool = sqlx::PgPool::connect(&config.database_url).await?;
-    
+
     // Run migrations
     sqlx::migrate!("./migrations").run(&pool).await?;
-    
+
     info!("Database connected and migrations applied");
 
     // CORS configuration
@@ -139,18 +133,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .layer(
             ServiceBuilder::new()
                 .layer(TraceLayer::new_for_http())
-                .layer(cors)
+                .layer(cors),
         );
 
     // Server address
     let addr = SocketAddr::from(([0, 0, 0, 0], config.port));
-    
+
     info!("🚀 Server starting on {}", addr);
-    info!("📚 OpenAPI docs available at http://{}:{}/swagger-ui/", config.host, config.port);
-    
+    info!(
+        "📚 OpenAPI docs available at http://{}:{}/swagger-ui/",
+        config.host, config.port
+    );
+
     // Start the server
     let listener = tokio::net::TcpListener::bind(addr).await?;
     axum::serve(listener, app).await?;
 
     Ok(())
-} 
+}

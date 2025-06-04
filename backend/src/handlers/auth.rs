@@ -184,9 +184,6 @@ pub async fn login(
     let refresh_token = generate_secure_token();
     let refresh_token_hash = hash_refresh_token(&refresh_token);
 
-    println!("Generated refresh token: {}", refresh_token);
-    println!("Generated refresh token hash: {}", refresh_token_hash);
-
     // Store refresh token
     sqlx::query(
         r#"
@@ -263,14 +260,11 @@ pub async fn refresh_token(
 ) -> Result<Json<AuthResponse>, AppError> {
     let token_hash = hash_refresh_token(&payload.refresh_token);
 
-    println!("Received refresh token: {}", payload.refresh_token);
-    println!("Computed token hash: {}", token_hash);
-
     // Find and validate refresh token
     let refresh_token = sqlx::query_as::<_, RefreshToken>(
         r#"
         SELECT * FROM refresh_tokens 
-        WHERE token_hash = $1 AND revoked = false
+        WHERE token_hash = $1 AND revoked = false AND expires_at > NOW()
         "#,
     )
     // WHERE token_hash = $1 AND revoked = false AND expires_at > NOW()

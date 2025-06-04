@@ -1,0 +1,51 @@
+name: Rust Test
+
+on:
+  pull_request:
+    paths:
+      - "backend/**"
+
+jobs:
+  test:
+    name: Run cargo test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: backend
+
+      - name: Setup environment variables
+        run: |
+          cp env.example .env
+
+      - name: Start database with Docker Compose
+        run: |
+          docker-compose up -d postgres
+
+      - name: Wait for database to be ready
+        run: |
+          docker-compose run --rm postgres sh -c "until pg_isready -h postgres -U reddit_user -d reddit_db; do sleep 2; done;"
+
+      - name: Run migrations if needed
+        run: |
+          if [ -d "./migrations" ]; then
+            echo "Running migrations..."
+            # ここでマイグレーションコマンドを実行
+            # 例: sqlx migrate run
+          fi
+
+      - name: Run tests
+        run: |
+          cargo test
+        env:
+          DATABASE_URL: postgresql://reddit_user:reddit_password@localhost:5433/reddit_db
