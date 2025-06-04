@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use utoipa::{ToSchema, IntoParams};
+use utoipa::{IntoParams, ToSchema};
 
 #[derive(Debug, Serialize, ToSchema)]
 pub struct ErrorResponse {
@@ -16,7 +16,7 @@ pub struct SuccessResponse {
 pub struct PaginationQuery {
     #[serde(default = "default_page")]
     pub page: u32,
-    
+
     #[serde(default = "default_limit")]
     pub limit: u32,
 }
@@ -32,10 +32,7 @@ pub struct PaginatedResponse<T> {
 
 impl Default for PaginationQuery {
     fn default() -> Self {
-        Self {
-            page: 1,
-            limit: 20,
-        }
+        Self { page: 1, limit: 20 }
     }
 }
 
@@ -50,7 +47,7 @@ fn default_limit() -> u32 {
 impl<T> PaginatedResponse<T> {
     pub fn new(data: Vec<T>, total: u64, page: u32, limit: u32) -> Self {
         let total_pages = ((total as f64) / (limit as f64)).ceil() as u32;
-        
+
         Self {
             data,
             total,
@@ -59,4 +56,4 @@ impl<T> PaginatedResponse<T> {
             total_pages,
         }
     }
-} 
+}

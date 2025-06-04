@@ -21,25 +21,7 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-
-// 一時的な型定義（型定義が不完全なため）
-interface Thread {
-  id: string;
-  title: string;
-  content?: string | null;
-  created_at: string;
-  author_username?: string;
-  comment_count?: number;
-}
-
-interface PaginatedThreads {
-  data?: Thread[];
-  threads?: Thread[];
-  total?: number;
-  total_pages?: number;
-  page?: number;
-  limit?: number;
-}
+import { ThreadResponse } from "@/generated/schemas";
 
 export function ThreadList() {
   const [page, setPage] = useState(1);
@@ -54,6 +36,8 @@ export function ThreadList() {
     page,
     limit,
   });
+
+  console.log("Threads Response:", threadsResponse);
 
   const handleRefresh = () => {
     refetch();
@@ -120,13 +104,8 @@ export function ThreadList() {
   }
 
   // レスポンス構造に対応した柔軟なデータ取得
-  const responseData = threadsResponse as any;
-  const threads: Thread[] =
-    responseData?.threads?.data ||
-    responseData?.threads ||
-    responseData?.data ||
-    [];
-  const paginationData = responseData?.threads || responseData;
+  const threads: ThreadResponse[] = threadsResponse?.threads?.data ?? [];
+  const paginationData = threadsResponse?.threads;
 
   return (
     <div className="space-y-6">
@@ -139,14 +118,14 @@ export function ThreadList() {
       </div>
 
       <div className="grid gap-4">
-        {threads.map((thread: Thread) => (
+        {threads.map((thread) => (
           <Card key={thread.id} className="hover:shadow-md transition-shadow">
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-3">
                   <Avatar>
                     <AvatarFallback className="bg-orange-100 text-orange-600">
-                      {thread.author_username?.charAt(0).toUpperCase() || (
+                      {thread.user?.username.charAt(0).toUpperCase() || (
                         <User className="h-4 w-4" />
                       )}
                     </AvatarFallback>
@@ -158,7 +137,7 @@ export function ThreadList() {
                       </CardTitle>
                     </Link>
                     <CardDescription>
-                      投稿者: {thread.author_username || "匿名ユーザー"} •{" "}
+                      投稿者: {thread.user.display_name || "匿名ユーザー"} •{" "}
                       {new Date(thread.created_at).toLocaleDateString("ja-JP")}
                     </CardDescription>
                   </div>
