@@ -61,11 +61,9 @@ export function CreateThreadForm() {
           queryKey: getGetThreadsQueryKey(),
         });
       },
-      onError: (error: any) => {
+      onError: (error) => {
         console.error("Error creating thread:", error);
-        toast.error(
-          error?.response?.data?.message || "スレッドの作成に失敗しました"
-        );
+        toast.error("スレッドの作成に失敗しました");
       },
     },
   });
