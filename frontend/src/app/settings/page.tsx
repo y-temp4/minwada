@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/providers/auth-provider";
 import { toast } from "sonner";
-import { useUpdateProfile } from "@/generated/api";
+import { getGetCurrentUserQueryKey, useUpdateProfile } from "@/generated/api";
 
 import {
   Card,
@@ -39,6 +39,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ProtectedRoute } from "@/components/protected-route";
+import { useQueryClient } from "@tanstack/react-query";
 
 // プロフィール更新のバリデーションスキーマ
 const profileFormSchema = z.object({
@@ -105,7 +106,7 @@ export default function SettingsPage() {
   // プロフィール更新フォーム
   const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: {
+    values: {
       username: user?.username || "",
       display_name: user?.display_name || "",
       email: user?.email || "",
@@ -122,6 +123,8 @@ export default function SettingsPage() {
     },
   });
 
+  const queryClient = useQueryClient();
+
   // プロフィール更新の送信ハンドラー
   async function onProfileSubmit(data: ProfileFormValues) {
     if (!user) return;
@@ -135,6 +138,11 @@ export default function SettingsPage() {
           avatar_url: undefined, // 必要に応じて追加
         },
       });
+
+      queryClient.invalidateQueries({
+        queryKey: [...getGetCurrentUserQueryKey()],
+      });
+
       toast.success("プロフィールが更新されました");
     } catch (error) {
       console.error("Profile update failed:", error);
