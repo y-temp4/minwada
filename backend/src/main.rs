@@ -52,6 +52,7 @@ use crate::{config::Config, routes::create_routes};
         // User endpoints
         handlers::users::get_current_user,
         handlers::users::update_profile,
+        handlers::users::get_user_by_username,
     ),
     components(
         schemas(
@@ -79,6 +80,7 @@ use crate::{config::Config, routes::create_routes};
 
             // User DTOs
             models::users::UserResponse,
+            models::users::PublicUserResponse,
             models::users::UpdateProfileRequest,
 
             // Common DTOs

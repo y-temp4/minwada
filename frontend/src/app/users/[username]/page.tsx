@@ -9,51 +9,39 @@ import { Button } from "@/components/ui/button";
 import { CalendarIcon, Clock, Edit } from "lucide-react";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
+import { useGetUserByUsername } from "@/generated/api";
 
 export default function UserProfilePage() {
   const { username } = useParams<{ username: string }>();
   const { user: currentUser } = useAuth();
   const router = useRouter();
   const [isCurrentUser, setIsCurrentUser] = useState(false);
-  const [userNotFound, setUserNotFound] = useState(false);
-  const [user, setUser] = useState<{
-    id: string;
-    username: string;
-    display_name?: string;
-    created_at: string;
-  } | null>(null);
-  const [loading, setLoading] = useState(true);
 
+  // useGetUserByUsernameフックを使用してユーザー情報を取得
+  const {
+    data: user,
+    isLoading: loading,
+    isError,
+    error,
+  } = useGetUserByUsername(username);
+
+  // エラーが発生した場合はコンソールに出力
   useEffect(() => {
-    // この実装はサンプルです。実際のアプリでは、ユーザー情報を取得するAPIを呼び出す必要があります。
-    // 例: API `/api/users/${username}` からユーザー情報を取得
+    if (isError && error) {
+      console.error("ユーザー情報の取得に失敗しました:", error);
+    }
+  }, [isError, error]);
 
-    // ここでは、現在のユーザーが要求されたユーザー名と一致するか確認しています
+  // 現在のユーザーかどうかをチェック
+  useEffect(() => {
     if (currentUser && currentUser.username === username) {
       setIsCurrentUser(true);
-      // @ts-expect-error wip
-      setUser(currentUser);
-      setLoading(false);
     } else {
-      // デモのために、現在のユーザーをユーザー情報として使用します
-      // 実際のアプリでは、この部分をAPIコールに置き換えてください
-      if (currentUser) {
-        // ダミーデータ（実際のアプリでは適切なAPIコールに置き換えてください）
-        // ユーザーが存在するという想定
-        setUser({
-          id: "dummy-id",
-          username: username as string,
-          display_name: `${username}のプロフィール`,
-          created_at: new Date().toISOString(),
-        });
-        setLoading(false);
-      } else {
-        // ユーザーが見つからない場合
-        setUserNotFound(true);
-        setLoading(false);
-      }
+      setIsCurrentUser(false);
     }
   }, [username, currentUser]);
+
+  const userNotFound = isError;
 
   if (loading) {
     return (

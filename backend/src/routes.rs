@@ -18,13 +18,7 @@ fn api_routes(pool: PgPool) -> Router {
         .nest("/auth", auth_routes())
         .nest("/threads", thread_routes(pool.clone()))
         .nest("/comments", comment_routes(pool.clone()))
-        .nest(
-            "/users",
-            user_routes().route_layer(middleware::from_fn_with_state(
-                pool.clone(),
-                auth_middleware,
-            )),
-        )
+        .nest("/users", user_routes(pool.clone()))
         .with_state(pool)
 }
 
@@ -76,8 +70,20 @@ fn comment_routes(pool: PgPool) -> Router<PgPool> {
         ))
 }
 
-fn user_routes() -> Router<PgPool> {
-    Router::new()
+fn user_routes(pool: PgPool) -> Router<PgPool> {
+    // 認証が必要なルート
+    let auth_routes = Router::new()
         .route("/me", get(handlers::users::get_current_user))
         .route("/me", put(handlers::users::update_profile))
+        .route_layer(middleware::from_fn_with_state(
+            pool.clone(),
+            auth_middleware,
+        ));
+
+    // 認証不要のルート
+    let public_routes =
+        Router::new().route("/{username}", get(handlers::users::get_user_by_username));
+
+    // マージして返す
+    auth_routes.merge(public_routes)
 }

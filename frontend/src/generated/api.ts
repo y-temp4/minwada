@@ -31,6 +31,7 @@ import type {
   GetThreadsParams,
   LoginRequest,
   LogoutResponse,
+  PublicUserResponse,
   RefreshTokenRequest,
   RegisterRequest,
   ThreadListResponse,
@@ -1740,3 +1741,165 @@ export const useUpdateProfile = <TError = ErrorResponse, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient);
 };
+
+export const getUserByUsername = (
+  username: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<PublicUserResponse>(
+    { url: `/api/users/${username}`, method: "GET", signal },
+    options,
+  );
+};
+
+export const getGetUserByUsernameQueryKey = (username: string) => {
+  return [`/api/users/${username}`] as const;
+};
+
+export const getGetUserByUsernameQueryOptions = <
+  TData = Awaited<ReturnType<typeof getUserByUsername>>,
+  TError = ErrorResponse,
+>(
+  username: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUserByUsername>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetUserByUsernameQueryKey(username);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getUserByUsername>>
+  > = ({ signal }) => getUserByUsername(username, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!username,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getUserByUsername>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetUserByUsernameQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getUserByUsername>>
+>;
+export type GetUserByUsernameQueryError = ErrorResponse;
+
+export function useGetUserByUsername<
+  TData = Awaited<ReturnType<typeof getUserByUsername>>,
+  TError = ErrorResponse,
+>(
+  username: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUserByUsername>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserByUsername>>,
+          TError,
+          Awaited<ReturnType<typeof getUserByUsername>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetUserByUsername<
+  TData = Awaited<ReturnType<typeof getUserByUsername>>,
+  TError = ErrorResponse,
+>(
+  username: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUserByUsername>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserByUsername>>,
+          TError,
+          Awaited<ReturnType<typeof getUserByUsername>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetUserByUsername<
+  TData = Awaited<ReturnType<typeof getUserByUsername>>,
+  TError = ErrorResponse,
+>(
+  username: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUserByUsername>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useGetUserByUsername<
+  TData = Awaited<ReturnType<typeof getUserByUsername>>,
+  TError = ErrorResponse,
+>(
+  username: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUserByUsername>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetUserByUsernameQueryOptions(username, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}

@@ -47,3 +47,6 @@ export * from "./userInfoDisplayName";
 export * from "./userResponse";
 export * from "./userResponseAvatarUrl";
 export * from "./userResponseDisplayName";
+export * from "./publicUserResponse";
+export * from "./publicUserResponseAvatarUrl";
+export * from "./publicUserResponseDisplayName";
