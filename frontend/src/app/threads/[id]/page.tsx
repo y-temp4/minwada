@@ -1,8 +1,10 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MessageSquare, User, Clock } from "lucide-react";
+import { ArrowLeft, MessageSquare, User, Clock, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,9 +17,24 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { useGetThread, useGetComments } from "@/generated/api";
+import {
+  useGetThread,
+  useGetComments,
+  useDeleteThread,
+  getGetThreadsQueryKey,
+} from "@/generated/api";
 import { CreateCommentForm } from "@/components/create-comment-form";
 import { CommentList } from "@/components/comment-list";
+import { useAuth } from "@/providers/auth-provider";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function ThreadDetailPage() {
   const params = useParams();
@@ -34,6 +51,31 @@ export default function ThreadDetailPage() {
     isLoading: commentsLoading,
     error: commentsError,
   } = useGetComments(threadId);
+
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  const { mutate: deleteThread } = useDeleteThread();
+
+  const handleDeleteThread = () => {
+    deleteThread(
+      { id: threadId },
+      {
+        onSuccess: () => {
+          // スレッド一覧のキャッシュを無効化
+          queryClient.invalidateQueries({
+            queryKey: [...getGetThreadsQueryKey()],
+          });
+          toast.success("スレッドが削除されました");
+          router.push("/");
+        },
+        onError: () => {
+          toast.error("スレッドの削除に失敗しました");
+        },
+      }
+    );
+  };
 
   if (threadLoading) {
     return (
@@ -172,6 +214,47 @@ export default function ThreadDetailPage() {
                   </CardDescription>
                 </div>
               </div>
+              {user && thread.user && user.id === thread.user.id && (
+                <div className="flex-shrink-0">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="icon" className="mr-2">
+                        <Trash2 className="h-5 w-5 text-gray-500" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>スレッドの削除</DialogTitle>
+                        <DialogDescription>
+                          このスレッドを本当に削除してもよろしいですか？
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            handleDeleteThread();
+                          }}
+                        >
+                          削除
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          onClick={(e) => {
+                            // ダイアログを閉じる
+                            const dialog = e.currentTarget.closest("dialog");
+                            if (dialog) {
+                              dialog.close();
+                            }
+                          }}
+                        >
+                          キャンセル
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              )}
             </div>
           </CardHeader>
           {thread.content && (
