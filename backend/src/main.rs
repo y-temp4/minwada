@@ -50,9 +50,9 @@ use crate::{config::Config, routes::create_routes};
         handlers::comments::delete_comment,
 
         // User endpoints
-        handlers::users::get_current_user,
-        handlers::users::update_profile,
-        handlers::users::get_user_by_username,
+        handlers::users::profile::get_current_user,
+        handlers::users::profile::update_profile,
+        handlers::users::detail::get_user_by_username,
     ),
     components(
         schemas(
