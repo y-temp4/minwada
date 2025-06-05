@@ -17,7 +17,7 @@ fn api_routes(pool: PgPool) -> Router {
     Router::new()
         .nest("/auth", auth_routes())
         .nest("/threads", thread_routes(pool.clone()))
-        .nest("/comments", comment_routes())
+        .nest("/comments", comment_routes(pool.clone()))
         .nest(
             "/users",
             user_routes().route_layer(middleware::from_fn_with_state(
@@ -66,11 +66,14 @@ fn thread_routes(pool: PgPool) -> Router<PgPool> {
     public_routes.merge(auth_routes)
 }
 
-fn comment_routes() -> Router<PgPool> {
+fn comment_routes(pool: PgPool) -> Router<PgPool> {
     Router::new()
-    // TODO: Add auth middleware back later
-    // .route("/:id", put(handlers::comments::update_comment))
-    // .route("/:id", delete(handlers::comments::delete_comment))
+        .route("/{id}", put(handlers::comments::update_comment))
+        .route("/{id}", delete(handlers::comments::delete_comment))
+        .route_layer(middleware::from_fn_with_state(
+            pool.clone(),
+            auth_middleware,
+        ))
 }
 
 fn user_routes() -> Router<PgPool> {

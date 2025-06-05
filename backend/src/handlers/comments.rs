@@ -4,7 +4,6 @@ use axum::{
     Json,
 };
 use sqlx::PgPool;
-use std::collections::HashMap;
 use uuid::Uuid;
 use validator::Validate;
 

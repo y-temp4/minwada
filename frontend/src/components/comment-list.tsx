@@ -11,16 +11,34 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw, MessageSquare, User, Clock, Reply } from "lucide-react";
+import {
+  RefreshCw,
+  MessageSquare,
+  User,
+  Clock,
+  Reply,
+  Trash2,
+} from "lucide-react";
 import { ReplyCommentForm } from "@/components/reply-comment-form";
 import { useAuth } from "@/providers/auth-provider";
 import { CommentResponse, CommentListResponse } from "@/generated/schemas";
+import { useDeleteComment, getGetCommentsQueryKey } from "@/generated/api";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface CommentListProps {
   threadId: string;
   commentsResponse?: CommentListResponse;
   isLoading: boolean;
-  error?: any;
+  error?: unknown;
 }
 
 interface CommentItemProps {
@@ -36,10 +54,36 @@ function CommentItem({
   depth = 0,
   maxDepth = 3,
 }: CommentItemProps) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const queryClient = useQueryClient();
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [newReplyId, setNewReplyId] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const { mutate: deleteComment } = useDeleteComment();
+
+  const handleDeleteComment = () => {
+    console.log(`Deleting comment with ID: ${comment.id}`);
+    deleteComment(
+      { id: comment.id },
+      {
+        onSuccess: () => {
+          console.log("Comment deletion successful");
+          // コメント一覧のキャッシュを無効化
+          queryClient.invalidateQueries({
+            queryKey: [...getGetCommentsQueryKey(threadId)],
+          });
+          toast.success("コメントが削除されました");
+          setShowDeleteDialog(false);
+        },
+        onError: (error) => {
+          console.error("Comment deletion failed:", error);
+          toast.error("コメントの削除に失敗しました");
+        },
+      }
+    );
+  };
 
   // 新しい返信が追加された後のスクロール処理
   useEffect(() => {
@@ -121,6 +165,48 @@ function CommentItem({
                   )}
               </div>
             </div>
+            {user && comment.user && user.id === comment.user.id && (
+              <div className="flex-shrink-0">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={() => setShowDeleteDialog(true)}
+                >
+                  <Trash2 className="h-4 w-4 text-gray-500" />
+                </Button>
+                <Dialog
+                  open={showDeleteDialog}
+                  onOpenChange={setShowDeleteDialog}
+                >
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>コメントの削除</DialogTitle>
+                      <DialogDescription>
+                        このコメントを本当に削除してもよろしいですか？
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          handleDeleteComment();
+                          setShowDeleteDialog(false);
+                        }}
+                      >
+                        削除
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => setShowDeleteDialog(false)}
+                      >
+                        キャンセル
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
           </div>
         </CardHeader>
 
