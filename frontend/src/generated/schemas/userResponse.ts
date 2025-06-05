@@ -5,13 +5,13 @@
  * A Reddit-like discussion platform API built with Rust and axum
  * OpenAPI spec version: 1.0.0
  */
+import type { UserResponseAvatarUrl } from "./userResponseAvatarUrl";
+import type { UserResponseDisplayName } from "./userResponseDisplayName";
 
 export interface UserResponse {
-  /** @nullable */
-  avatar_url?: string | null;
+  avatar_url?: UserResponseAvatarUrl;
   created_at: string;
-  /** @nullable */
-  display_name?: string | null;
+  display_name?: UserResponseDisplayName;
   email: string;
   email_verified: boolean;
   id: string;

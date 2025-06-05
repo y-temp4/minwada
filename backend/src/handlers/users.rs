@@ -8,6 +8,7 @@ use validator::Validate;
 use crate::{
     error::AppError,
     models::{
+        common::ErrorResponse,
         users::{UpdateProfileRequest, UserResponse},
         User,
     },

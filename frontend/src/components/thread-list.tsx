@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { ThreadResponse } from "@/generated/schemas";
 
 export function ThreadList() {
   const [page, setPage] = useState(1);
@@ -51,8 +50,7 @@ export function ThreadList() {
 
   const handleNextPage = () => {
     // 型定義が不完全なので、any型でアクセス
-    const paginationData =
-      (threadsResponse as any)?.threads || (threadsResponse as any);
+    const paginationData = threadsResponse?.threads;
     if (paginationData?.total_pages && page < paginationData.total_pages) {
       setPage(page + 1);
     }
@@ -104,7 +102,7 @@ export function ThreadList() {
   }
 
   // レスポンス構造に対応した柔軟なデータ取得
-  const threads: ThreadResponse[] = threadsResponse?.threads?.data ?? [];
+  const threads = threadsResponse?.threads?.data ?? [];
   const paginationData = threadsResponse?.threads;
 
   return (

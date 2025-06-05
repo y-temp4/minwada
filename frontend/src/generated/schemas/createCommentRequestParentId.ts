@@ -5,8 +5,5 @@
  * A Reddit-like discussion platform API built with Rust and axum
  * OpenAPI spec version: 1.0.0
  */
-import type { PaginatedResponseThreadResponse } from "./paginatedResponseThreadResponse";
 
-export interface ThreadListResponse {
-  threads: PaginatedResponseThreadResponse;
-}
+export type CreateCommentRequestParentId = string | null;

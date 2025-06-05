@@ -7,7 +7,10 @@ use uuid::Uuid;
 
 use crate::{
     error::AppError,
-    models::threads::{ThreadResponse, ThreadWithUser},
+    models::{
+        common::ErrorResponse,
+        threads::{ThreadResponse, ThreadWithUser},
+    },
 };
 
 #[utoipa::path(

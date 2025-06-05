@@ -5,9 +5,9 @@
  * A Reddit-like discussion platform API built with Rust and axum
  * OpenAPI spec version: 1.0.0
  */
+import type { CreateThreadRequestContent } from "./createThreadRequestContent";
 
 export interface CreateThreadRequest {
-  /** @nullable */
-  content?: string | null;
+  content?: CreateThreadRequestContent;
   title: string;
 }

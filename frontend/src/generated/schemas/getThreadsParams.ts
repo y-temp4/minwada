@@ -10,9 +10,9 @@ export type GetThreadsParams = {
   /**
    * Page number (default: 1)
    */
-  page?: number | null;
+  page?: number;
   /**
    * Number of items per page (default: 20)
    */
-  limit?: number | null;
+  limit?: number;
 };

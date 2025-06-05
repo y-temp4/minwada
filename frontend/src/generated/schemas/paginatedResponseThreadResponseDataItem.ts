@@ -5,16 +5,16 @@
  * A Reddit-like discussion platform API built with Rust and axum
  * OpenAPI spec version: 1.0.0
  */
-import type { ThreadResponseContent } from "./threadResponseContent";
+import type { PaginatedResponseThreadResponseDataItemContent } from "./paginatedResponseThreadResponseDataItemContent";
 import type { ThreadUser } from "./threadUser";
 
-export interface ThreadResponse {
+export type PaginatedResponseThreadResponseDataItem = {
   /** @minimum 0 */
   comment_count: number;
-  content?: ThreadResponseContent;
+  content?: PaginatedResponseThreadResponseDataItemContent;
   created_at: string;
   id: string;
   title: string;
   updated_at: string;
   user: ThreadUser;
-}
+};

@@ -6,10 +6,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface PaginatedResponse {
-  data: any[];
-  total: number;
-  page: number;
-  limit: number;
-  total_pages: number;
-}
+export type PaginatedResponseThreadResponseDataItemContent = string | null;

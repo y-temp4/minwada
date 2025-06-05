@@ -5,10 +5,10 @@
  * A Reddit-like discussion platform API built with Rust and axum
  * OpenAPI spec version: 1.0.0
  */
+import type { RegisterRequestDisplayName } from "./registerRequestDisplayName";
 
 export interface RegisterRequest {
-  /** @nullable */
-  display_name?: string | null;
+  display_name?: RegisterRequestDisplayName;
   email: string;
   password: string;
   username: string;

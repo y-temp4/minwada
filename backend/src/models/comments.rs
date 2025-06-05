@@ -38,6 +38,7 @@ pub struct CommentResponse {
     pub updated_at: DateTime<Utc>,
     pub user: CommentUser,
     pub parent_id: Option<Uuid>,
+    #[schema(no_recursion)]
     pub replies: Vec<CommentResponse>,
     pub reply_count: u64,
 }

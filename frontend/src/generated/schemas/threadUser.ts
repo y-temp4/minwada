@@ -5,12 +5,12 @@
  * A Reddit-like discussion platform API built with Rust and axum
  * OpenAPI spec version: 1.0.0
  */
+import type { ThreadUserAvatarUrl } from "./threadUserAvatarUrl";
+import type { ThreadUserDisplayName } from "./threadUserDisplayName";
 
 export interface ThreadUser {
-  /** @nullable */
-  avatar_url?: string | null;
-  /** @nullable */
-  display_name?: string | null;
+  avatar_url?: ThreadUserAvatarUrl;
+  display_name?: ThreadUserDisplayName;
   id: string;
   username: string;
 }

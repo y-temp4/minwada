@@ -9,6 +9,7 @@ use validator::Validate;
 use crate::{
     error::AppError,
     models::{
+        common::ErrorResponse,
         threads::{CreateThreadRequest, ThreadResponse, ThreadWithUser},
         User,
     },

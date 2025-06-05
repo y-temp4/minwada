@@ -5,14 +5,14 @@
  * A Reddit-like discussion platform API built with Rust and axum
  * OpenAPI spec version: 1.0.0
  */
+import type { CommentResponseParentId } from "./commentResponseParentId";
 import type { CommentUser } from "./commentUser";
 
 export interface CommentResponse {
   content: string;
   created_at: string;
   id: string;
-  /** @nullable */
-  parent_id?: string | null;
+  parent_id?: CommentResponseParentId;
   replies: CommentResponse[];
   /** @minimum 0 */
   reply_count: number;

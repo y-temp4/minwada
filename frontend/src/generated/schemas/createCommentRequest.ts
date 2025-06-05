@@ -5,9 +5,9 @@
  * A Reddit-like discussion platform API built with Rust and axum
  * OpenAPI spec version: 1.0.0
  */
+import type { CreateCommentRequestParentId } from "./createCommentRequestParentId";
 
 export interface CreateCommentRequest {
   content: string;
-  /** @nullable */
-  parent_id?: string | null;
+  parent_id?: CreateCommentRequestParentId;
 }

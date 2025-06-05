@@ -57,6 +57,7 @@ pub struct ThreadUser {
 
 #[derive(Debug, Serialize, ToSchema)]
 pub struct ThreadListResponse {
+    #[schema(value_type = PaginatedResponse<ThreadResponse>)]
     pub threads: PaginatedResponse<ThreadResponse>,
 }
 

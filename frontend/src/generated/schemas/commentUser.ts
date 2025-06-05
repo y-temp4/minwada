@@ -5,12 +5,12 @@
  * A Reddit-like discussion platform API built with Rust and axum
  * OpenAPI spec version: 1.0.0
  */
+import type { CommentUserAvatarUrl } from "./commentUserAvatarUrl";
+import type { CommentUserDisplayName } from "./commentUserDisplayName";
 
 export interface CommentUser {
-  /** @nullable */
-  avatar_url?: string | null;
-  /** @nullable */
-  display_name?: string | null;
+  avatar_url?: CommentUserAvatarUrl;
+  display_name?: CommentUserDisplayName;
   id: string;
   username: string;
 }

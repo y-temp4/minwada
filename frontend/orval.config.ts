@@ -3,7 +3,7 @@ import { defineConfig } from "orval";
 export default defineConfig({
   "reddit-api": {
     input: {
-      target: "http://localhost:8000/api/openapi.json",
+      target: "../backend/static/openapi.json",
     },
     output: {
       target: "./src/generated/api.ts",

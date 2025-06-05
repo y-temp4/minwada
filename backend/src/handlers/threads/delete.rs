@@ -5,7 +5,10 @@ use axum::{
 use sqlx::PgPool;
 use uuid::Uuid;
 
-use crate::{error::AppError, models::User};
+use crate::{
+    error::AppError,
+    models::{common::ErrorResponse, User},
+};
 
 #[utoipa::path(
     delete,

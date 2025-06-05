@@ -5,12 +5,12 @@
  * A Reddit-like discussion platform API built with Rust and axum
  * OpenAPI spec version: 1.0.0
  */
+import type { UpdateProfileRequestAvatarUrl } from "./updateProfileRequestAvatarUrl";
+import type { UpdateProfileRequestDisplayName } from "./updateProfileRequestDisplayName";
+import type { UpdateProfileRequestUsername } from "./updateProfileRequestUsername";
 
 export interface UpdateProfileRequest {
-  /** @nullable */
-  avatar_url?: string | null;
-  /** @nullable */
-  display_name?: string | null;
-  /** @nullable */
-  username?: string | null;
+  avatar_url?: UpdateProfileRequestAvatarUrl;
+  display_name?: UpdateProfileRequestDisplayName;
+  username?: UpdateProfileRequestUsername;
 }

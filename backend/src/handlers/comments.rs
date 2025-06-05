@@ -15,6 +15,7 @@ use crate::{
             CommentListResponse, CommentResponse, CommentWithUser, CreateCommentRequest,
             UpdateCommentRequest,
         },
+        common::ErrorResponse,
         User,
     },
 };

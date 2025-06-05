@@ -5,10 +5,10 @@
  * A Reddit-like discussion platform API built with Rust and axum
  * OpenAPI spec version: 1.0.0
  */
+import type { UpdateThreadRequestContent } from "./updateThreadRequestContent";
+import type { UpdateThreadRequestTitle } from "./updateThreadRequestTitle";
 
 export interface UpdateThreadRequest {
-  /** @nullable */
-  content?: string | null;
-  /** @nullable */
-  title?: string | null;
+  content?: UpdateThreadRequestContent;
+  title?: UpdateThreadRequestTitle;
 }

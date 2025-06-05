@@ -20,6 +20,7 @@ use tower::ServiceBuilder;
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 use tracing::{info, Level};
 use utoipa::OpenApi;
+use utoipa_axum::router::OpenApiRouter;
 use utoipa_swagger_ui::SwaggerUi;
 
 use crate::{config::Config, routes::create_routes};
@@ -67,6 +68,7 @@ use crate::{config::Config, routes::create_routes};
             models::threads::ThreadResponse,
             models::threads::ThreadListResponse,
             models::threads::ThreadUser,
+            models::common::PaginatedResponse<models::threads::ThreadResponse>,
 
             // Comment DTOs
             models::comments::CreateCommentRequest,
@@ -99,6 +101,8 @@ struct ApiDoc;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    unsafe { backtrace_on_stack_overflow::enable() };
+
     // Initialize tracing
     tracing_subscriber::fmt()
         .with_max_level(Level::DEBUG)
@@ -119,6 +123,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Database connected and migrations applied");
 
+    // Write OpenAPI documentation to file
+    let openapi_json = serde_json::to_string_pretty(&ApiDoc::openapi())?;
+
+    // Create directory if it doesn't exist
+    let openapi_dir = std::path::Path::new("./static");
+    if !openapi_dir.exists() {
+        std::fs::create_dir_all(openapi_dir)?;
+    }
+
+    // Write the OpenAPI JSON to a file
+    std::fs::write("./static/openapi.json", openapi_json)?;
+    info!("📄 OpenAPI JSON file written to ./static/openapi.json");
+
     // CORS configuration
     let cors = CorsLayer::new()
         .allow_origin(config.cors_origin.parse::<HeaderValue>()?)
@@ -126,10 +143,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .allow_headers([AUTHORIZATION, CONTENT_TYPE])
         .allow_credentials(true);
 
+    let (router, _api) = OpenApiRouter::with_openapi(ApiDoc::openapi()).split_for_parts();
+
+    // Serve static files
+    let static_files_service = tower_http::services::ServeDir::new("./static");
+    let static_files_router = Router::new().nest_service("/static", static_files_service);
+
     // Build the application router
-    let app = Router::new()
+    let router = router
         .merge(create_routes(pool.clone()))
-        .merge(SwaggerUi::new("/swagger-ui").url("/api/openapi.json", ApiDoc::openapi()))
+        .merge(static_files_router)
+        .merge(SwaggerUi::new("/swagger-ui").url("/static/openapi.json", ApiDoc::openapi()))
         .layer(
             ServiceBuilder::new()
                 .layer(TraceLayer::new_for_http())
@@ -147,7 +171,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Start the server
     let listener = tokio::net::TcpListener::bind(addr).await?;
-    axum::serve(listener, app).await?;
+    axum::serve(listener, router.into_make_service()).await?;
 
     Ok(())
 }

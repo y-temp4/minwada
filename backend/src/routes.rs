@@ -42,19 +42,19 @@ fn thread_routes(pool: PgPool) -> Router<PgPool> {
     // 認証不要のルート
     let public_routes = Router::new()
         .route("/", get(handlers::threads::get_threads))
-        .route("/:id", get(handlers::threads::get_thread))
+        .route("/{id}", get(handlers::threads::get_thread))
         .route(
-            "/:thread_id/comments",
+            "/{thread_id}/comments",
             get(handlers::comments::get_comments),
         );
 
     // 認証が必要なルート
     let auth_routes = Router::new()
         .route("/", post(handlers::threads::create_thread))
-        .route("/:id", put(handlers::threads::update_thread))
-        .route("/:id", delete(handlers::threads::delete_thread))
+        .route("/{id}", put(handlers::threads::update_thread))
+        .route("/{id}", delete(handlers::threads::delete_thread))
         .route(
-            "/:thread_id/comments",
+            "/{thread_id}/comments",
             post(handlers::comments::create_comment),
         )
         .route_layer(middleware::from_fn_with_state(
