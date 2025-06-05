@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useState } from "react";
 import { ArrowLeft, MessageSquare, User, Clock, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -39,6 +40,7 @@ import {
 export default function ThreadDetailPage() {
   const params = useParams();
   const threadId = params.id as string;
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const {
     data: thread,
@@ -216,7 +218,10 @@ export default function ThreadDetailPage() {
               </div>
               {user && thread.user && user.id === thread.user.id && (
                 <div className="flex-shrink-0">
-                  <Dialog>
+                  <Dialog
+                    open={deleteDialogOpen}
+                    onOpenChange={setDeleteDialogOpen}
+                  >
                     <DialogTrigger asChild>
                       <Button variant="outline" size="icon" className="mr-2">
                         <Trash2 className="h-5 w-5 text-gray-500" />
@@ -234,19 +239,14 @@ export default function ThreadDetailPage() {
                           variant="outline"
                           onClick={() => {
                             handleDeleteThread();
+                            setDeleteDialogOpen(false);
                           }}
                         >
                           削除
                         </Button>
                         <Button
                           variant="ghost"
-                          onClick={(e) => {
-                            // ダイアログを閉じる
-                            const dialog = e.currentTarget.closest("dialog");
-                            if (dialog) {
-                              dialog.close();
-                            }
-                          }}
+                          onClick={() => setDeleteDialogOpen(false)}
                         >
                           キャンセル
                         </Button>
