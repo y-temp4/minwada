@@ -120,6 +120,47 @@ pub async fn cleanup_test_thread(pool: &PgPool, thread_id: Uuid) {
         .expect("Failed to delete test thread");
 }
 
+// テスト用のコメントを作成する関数
+#[cfg(test)]
+pub async fn create_test_comment(
+    pool: &PgPool,
+    user_id: Uuid,
+    thread_id: Uuid,
+    content: &str,
+    parent_id: Option<Uuid>,
+) -> Uuid {
+    let comment_id = Uuid::new_v4();
+    sqlx::query(
+        r#"
+        INSERT INTO comments (id, thread_id, user_id, parent_id, content, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        "#,
+    )
+    .bind(comment_id)
+    .bind(thread_id)
+    .bind(user_id)
+    .bind(parent_id)
+    .bind(content)
+    .bind(Utc::now())
+    .bind(Utc::now())
+    .execute(pool)
+    .await
+    .expect("Failed to create comment");
+
+    comment_id
+}
+
+// テスト終了後にコメントデータをクリーンアップする関数
+#[cfg(test)]
+pub async fn cleanup_test_comment(pool: &PgPool, comment_id: Uuid) {
+    // コメントを削除
+    sqlx::query("DELETE FROM comments WHERE id = $1")
+        .bind(comment_id)
+        .execute(pool)
+        .await
+        .expect("Failed to delete test comment");
+}
+
 // テスト用のユーザーとスレッドデータを作成する関数
 #[cfg(test)]
 pub async fn seed_test_data(pool: &PgPool, username_suffix: &str) -> (Uuid, Uuid) {

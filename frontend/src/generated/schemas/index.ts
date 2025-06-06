@@ -8,6 +8,8 @@
 
 export * from "./authResponse";
 export * from "./changePasswordRequest";
+export * from "./commentListItem";
+export * from "./commentListItemParentId";
 export * from "./commentListResponse";
 export * from "./commentResponse";
 export * from "./commentResponseParentId";
@@ -20,6 +22,7 @@ export * from "./createThreadRequest";
 export * from "./createThreadRequestContent";
 export * from "./errorResponse";
 export * from "./getThreadsParams";
+export * from "./getUserCommentsParams";
 export * from "./getUserThreadsParams";
 export * from "./loginRequest";
 export * from "./logoutResponse";
