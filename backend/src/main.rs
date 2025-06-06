@@ -5,6 +5,7 @@ mod handlers;
 mod middleware;
 mod models;
 mod routes;
+mod test_utils;
 mod utils;
 mod validations;
 
@@ -30,12 +31,12 @@ use crate::{config::Config, routes::create_routes};
 #[openapi(
     paths(
         // Auth endpoints
-        handlers::auth::register,
-        handlers::auth::login,
-        handlers::auth::logout,
-        handlers::auth::refresh_token,
-        handlers::auth::google_auth,
-        handlers::auth::google_callback,
+        handlers::auth::register::register,
+        handlers::auth::login::login,
+        handlers::auth::logout::logout,
+        handlers::auth::refresh_token::refresh_token,
+        handlers::auth::google_auth::google_auth,
+        handlers::auth::google_callback::google_callback,
 
         // Thread endpoints
         handlers::threads::list::get_threads,

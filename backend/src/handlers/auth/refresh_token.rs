@@ -10,6 +10,7 @@ use crate::{
     error::AppError,
     models::{
         auth::{AuthResponse, RefreshTokenRequest, UserInfo},
+        common::ErrorResponse,
         RefreshToken, User,
     },
     utils::{generate_secure_token, token_hash::hash_refresh_token},

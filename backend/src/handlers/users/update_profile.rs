@@ -79,3 +79,263 @@ pub async fn update_profile(
 
     Ok(Json(UserResponse::from(updated_user)))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use axum::extract::State;
+
+    use crate::test_utils::{cleanup_test_user, seed_test_user, setup_test_db};
+
+    #[tokio::test]
+    async fn test_update_profile_success() {
+        // テスト用データベースをセットアップ
+        let pool = setup_test_db().await;
+
+        // テストユーザーを作成
+        let user_id = seed_test_user(&pool, "profile_update_test").await;
+
+        // テスト用のユーザーを取得
+        let user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE id = $1")
+            .bind(user_id)
+            .fetch_one(&pool)
+            .await
+            .expect("Failed to get test user");
+
+        // 更新リクエストを作成
+        let update_request = UpdateProfileRequest {
+            username: Some("updated_username".to_string()),
+            display_name: Some("Updated Display Name".to_string()),
+            avatar_url: Some("https://example.com/avatar.png".to_string()),
+        };
+
+        // ハンドラを直接呼び出し
+        let result =
+            update_profile(State(pool.clone()), Extension(user), Json(update_request)).await;
+
+        // レスポンスを検証
+        assert!(result.is_ok(), "update_profile should return Ok");
+
+        // 更新されたユーザーを取得して検証
+        let updated_user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE id = $1")
+            .bind(user_id)
+            .fetch_one(&pool)
+            .await
+            .expect("Failed to get updated user");
+
+        assert_eq!(updated_user.username, "updated_username");
+        assert_eq!(
+            updated_user.display_name,
+            Some("Updated Display Name".to_string())
+        );
+        assert_eq!(
+            updated_user.avatar_url,
+            Some("https://example.com/avatar.png".to_string())
+        );
+
+        // テストデータを削除
+        cleanup_test_user(&pool, user_id).await;
+    }
+
+    #[tokio::test]
+    async fn test_update_profile_username_exists() {
+        // テスト用データベースをセットアップ
+        let pool = setup_test_db().await;
+
+        // 2人のテストユーザーを作成
+        let user1_id = seed_test_user(&pool, "profile_update_user1").await;
+        let user2_id = seed_test_user(&pool, "profile_update_user2").await;
+
+        // テスト用のユーザーを取得
+        let user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE id = $1")
+            .bind(user1_id)
+            .fetch_one(&pool)
+            .await
+            .expect("Failed to get test user");
+
+        // 既存のユーザー名に更新しようとする
+        let existing_username = format!("testuser_profile_update_user2");
+        let update_request = UpdateProfileRequest {
+            username: Some(existing_username),
+            display_name: None,
+            avatar_url: None,
+        };
+
+        // ハンドラを直接呼び出し
+        let result =
+            update_profile(State(pool.clone()), Extension(user), Json(update_request)).await;
+
+        // エラーが返されることを確認
+        assert!(
+            result.is_err(),
+            "Should return error for duplicate username"
+        );
+
+        // 競合エラーを確認
+        match result {
+            Err(AppError::Conflict(_)) => {} // 期待通り
+            _ => panic!("Expected Conflict error"),
+        }
+
+        // テストデータを削除
+        cleanup_test_user(&pool, user1_id).await;
+        cleanup_test_user(&pool, user2_id).await;
+    }
+
+    #[tokio::test]
+    async fn test_update_profile_no_fields() {
+        // テスト用データベースをセットアップ
+        let pool = setup_test_db().await;
+
+        // テストユーザーを作成
+        let user_id = seed_test_user(&pool, "profile_update_empty").await;
+
+        // テスト用のユーザーを取得
+        let user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE id = $1")
+            .bind(user_id)
+            .fetch_one(&pool)
+            .await
+            .expect("Failed to get test user");
+
+        // 空のリクエストを作成
+        let update_request = UpdateProfileRequest {
+            username: None,
+            display_name: None,
+            avatar_url: None,
+        };
+
+        // ハンドラを直接呼び出し
+        let result =
+            update_profile(State(pool.clone()), Extension(user), Json(update_request)).await;
+
+        // エラーが返されることを確認
+        assert!(result.is_err(), "Should return error for empty update");
+
+        // Bad Requestエラーを確認
+        match result {
+            Err(AppError::BadRequest(_)) => {} // 期待通り
+            _ => panic!("Expected BadRequest error"),
+        }
+
+        // テストデータを削除
+        cleanup_test_user(&pool, user_id).await;
+    }
+
+    #[tokio::test]
+    async fn test_update_profile_invalid_url() {
+        // テスト用データベースをセットアップ
+        let pool = setup_test_db().await;
+
+        // テストユーザーを作成
+        let user_id = seed_test_user(&pool, "profile_update_invalid").await;
+
+        // テスト用のユーザーを取得
+        let user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE id = $1")
+            .bind(user_id)
+            .fetch_one(&pool)
+            .await
+            .expect("Failed to get test user");
+
+        // 無効なURLでリクエストを作成
+        let update_request = UpdateProfileRequest {
+            username: None,
+            display_name: None,
+            avatar_url: Some("invalid-url".to_string()),
+        };
+
+        // ハンドラを直接呼び出し
+        let result =
+            update_profile(State(pool.clone()), Extension(user), Json(update_request)).await;
+
+        // エラーが返されることを確認
+        assert!(result.is_err(), "Should return error for invalid URL");
+
+        // バリデーションエラーを確認
+        match result {
+            Err(AppError::Validation(_)) => {} // 期待通り
+            _ => panic!("Expected Validation error"),
+        }
+
+        // テストデータを削除
+        cleanup_test_user(&pool, user_id).await;
+    }
+
+    #[tokio::test]
+    async fn test_update_profile_invalid_username() {
+        // テスト用データベースをセットアップ
+        let pool = setup_test_db().await;
+
+        // テストユーザーを作成
+        let user_id = seed_test_user(&pool, "profile_update_invalid_username").await;
+
+        // テスト用のユーザーを取得
+        let user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE id = $1")
+            .bind(user_id)
+            .fetch_one(&pool)
+            .await
+            .expect("Failed to get test user");
+
+        // 3文字未満の不正なユーザー名でリクエストを作成
+        let update_request = UpdateProfileRequest {
+            username: Some("ab".to_string()), // 2文字のユーザー名（最小は3文字必要）
+            display_name: None,
+            avatar_url: None,
+        };
+
+        // ハンドラを直接呼び出し
+        let result =
+            update_profile(State(pool.clone()), Extension(user), Json(update_request)).await;
+
+        // エラーが返されることを確認
+        assert!(result.is_err(), "Should return error for invalid username");
+
+        // バリデーションエラーを確認
+        match result {
+            Err(AppError::Validation(_)) => {} // 期待通り
+            _ => panic!("Expected Validation error"),
+        }
+
+        // テストデータを削除
+        cleanup_test_user(&pool, user_id).await;
+    }
+
+    #[tokio::test]
+    async fn test_update_profile_username_too_long() {
+        // テスト用データベースをセットアップ
+        let pool = setup_test_db().await;
+
+        // テストユーザーを作成
+        let user_id = seed_test_user(&pool, "profile_update_username_too_long").await;
+
+        // テスト用のユーザーを取得
+        let user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE id = $1")
+            .bind(user_id)
+            .fetch_one(&pool)
+            .await
+            .expect("Failed to get test user");
+
+        // 51文字の長すぎるユーザー名を作成（最大は50文字）
+        let long_username = "a".repeat(51);
+        let update_request = UpdateProfileRequest {
+            username: Some(long_username),
+            display_name: None,
+            avatar_url: None,
+        };
+
+        // ハンドラを直接呼び出し
+        let result =
+            update_profile(State(pool.clone()), Extension(user), Json(update_request)).await;
+
+        // エラーが返されることを確認
+        assert!(result.is_err(), "Should return error for username too long");
+
+        // バリデーションエラーを確認
+        match result {
+            Err(AppError::Validation(_)) => {} // 期待通り
+            _ => panic!("Expected Validation error"),
+        }
+
+        // テストデータを削除
+        cleanup_test_user(&pool, user_id).await;
+    }
+}

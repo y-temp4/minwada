@@ -7,7 +7,7 @@ use std::collections::HashMap;
 
 use crate::{
     error::AppError,
-    models::auth::AuthResponse,
+    models::{auth::AuthResponse, common::ErrorResponse},
 };
 
 #[utoipa::path(

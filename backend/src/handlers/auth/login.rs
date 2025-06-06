@@ -16,6 +16,7 @@ use crate::{
         auth::{
             AuthResponse, LoginRequest, UserInfo,
         },
+        common::ErrorResponse,
         User, UserCredentials,
     },
     utils::{generate_secure_token, token_hash::hash_refresh_token},
