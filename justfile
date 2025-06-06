@@ -129,6 +129,11 @@ dev: db-up
         done
     ) &
 
+    sleep 3  # 少し待機して、バックエンドとフロントエンドが起動するのを待つ
+
+    open http://localhost:3000 &
+    open http://localhost:8025 &
+
     # すべてのバックグラウンドプロセスが終了するまで待機
     wait
 

@@ -37,19 +37,14 @@ export function Navigation() {
               <>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="p-0 h-8">
-                      <div className="flex items-center space-x-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback className="bg-orange-100 text-orange-600">
-                            {(user.display_name || user.username)
-                              .charAt(0)
-                              .toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm text-gray-600">
-                          {user.display_name || user.username}
-                        </span>
-                      </div>
+                    <Button variant="ghost" className="p-0 h-8 cursor-pointer">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-orange-100 text-orange-600">
+                          {(user.display_name || user.username)
+                            .charAt(0)
+                            .toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
