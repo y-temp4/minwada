@@ -2,8 +2,9 @@
 
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { verifyEmail } from "@/generated/api";
+import { getGetCurrentUserQueryKey, verifyEmail } from "@/generated/api";
 import Link from "next/link";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function VerifyEmailPage() {
   const params = useParams();
@@ -12,6 +13,8 @@ export default function VerifyEmailPage() {
     "pending" | "success" | "error"
   >("pending");
   const [message, setMessage] = useState<string>("メールアドレスを検証中...");
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!token) {
@@ -23,6 +26,9 @@ export default function VerifyEmailPage() {
         const response = await verifyEmail(token);
         setVerificationStatus("success");
         setMessage(response.message);
+        queryClient.invalidateQueries({
+          queryKey: [...getGetCurrentUserQueryKey()],
+        });
       } catch (error) {
         console.error("Email verification failed:", error);
         setVerificationStatus("error");

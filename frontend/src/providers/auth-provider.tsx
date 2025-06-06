@@ -16,6 +16,8 @@ interface User {
   display_name?: string | null;
   created_at: string;
   updated_at: string;
+  email_verified: boolean;
+  email_verified_at?: string | null;
 }
 
 interface AuthContextType {

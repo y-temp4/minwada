@@ -12,6 +12,7 @@ import {
   useChangePassword,
   useDeleteUser,
   useUpdateProfile,
+  useUpdateEmail,
 } from "@/generated/api";
 import { usernameSchema } from "@/schemas/user";
 
@@ -52,16 +53,10 @@ const profileFormSchema = z.object({
   username: usernameSchema.optional(),
   display_name: z
     .string()
-    .min(2, {
-      message: "表示名は2文字以上である必要があります",
-    })
     .max(30, {
       message: "表示名は30文字以下である必要があります",
     })
     .optional(),
-  email: z.string().email({
-    message: "有効なメールアドレスを入力してください",
-  }),
 });
 
 // パスワード変更のバリデーションスキーマ
@@ -87,8 +82,21 @@ const passwordFormSchema = z
     path: ["confirm_password"],
   });
 
+// メールアドレス変更のバリデーションスキーマ
+const emailFormSchema = z.object({
+  email: z
+    .string()
+    .email({
+      message: "有効なメールアドレスを入力してください",
+    })
+    .min(1, {
+      message: "メールアドレスを入力してください",
+    }),
+});
+
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 type PasswordFormValues = z.infer<typeof passwordFormSchema>;
+type EmailFormValues = z.infer<typeof emailFormSchema>;
 
 export default function SettingsPage() {
   const { user, logout } = useAuth();
@@ -96,9 +104,11 @@ export default function SettingsPage() {
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
   const deleteUserMutation = useDeleteUser();
+  const updateEmailMutation = useUpdateEmail();
 
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isChangingEmail, setIsChangingEmail] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteConfirmPassword, setDeleteConfirmPassword] = useState("");
   const [deleteError, setDeleteError] = useState("");
@@ -109,7 +119,6 @@ export default function SettingsPage() {
     values: {
       username: user?.username || "",
       display_name: user?.display_name || "",
-      email: user?.email || "",
     },
   });
 
@@ -120,6 +129,14 @@ export default function SettingsPage() {
       current_password: "",
       new_password: "",
       confirm_password: "",
+    },
+  });
+
+  // メールアドレス変更フォーム
+  const emailForm = useForm<EmailFormValues>({
+    resolver: zodResolver(emailFormSchema),
+    defaultValues: {
+      email: "",
     },
   });
 
@@ -171,6 +188,43 @@ export default function SettingsPage() {
       toast.error("パスワードの変更に失敗しました");
     } finally {
       setIsChangingPassword(false);
+    }
+  }
+
+  // メールアドレス変更の送信ハンドラー
+  async function onEmailSubmit(data: EmailFormValues) {
+    if (!user) return;
+
+    // 現在のメールアドレスと同じかチェック
+    if (data.email.toLowerCase() === user.email.toLowerCase()) {
+      emailForm.setError("email", {
+        message:
+          "新しいメールアドレスは現在のメールアドレスと異なる必要があります",
+      });
+      return;
+    }
+
+    setIsChangingEmail(true);
+    try {
+      await updateEmailMutation.mutateAsync({
+        data: {
+          email: data.email.toLowerCase(),
+        },
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [...getGetCurrentUserQueryKey()],
+      });
+
+      toast.success(
+        "メールアドレスが更新されました。確認メールを送信しました。"
+      );
+      emailForm.reset();
+    } catch (error) {
+      console.error("Email update failed:", error);
+      toast.error("メールアドレスの更新に失敗しました");
+    } finally {
+      setIsChangingEmail(false);
     }
   }
 
@@ -248,22 +302,6 @@ export default function SettingsPage() {
                         </FormControl>
                         <FormDescription>
                           他のユーザーに表示される名前です
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={profileForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>メールアドレス</FormLabel>
-                        <FormControl>
-                          <Input placeholder="メールアドレス" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          アカウント通知の送信先になります
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -349,6 +387,60 @@ export default function SettingsPage() {
                   />
                   <Button type="submit" disabled={isChangingPassword}>
                     {isChangingPassword ? "変更中..." : "パスワードを変更"}
+                  </Button>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* メールアドレス変更セクション */}
+        <section className="mb-10">
+          <Card>
+            <CardHeader>
+              <CardTitle>メールアドレス変更</CardTitle>
+              <CardDescription>
+                アカウントのメールアドレスを変更します。新しいメールアドレスで確認が必要になります。
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...emailForm}>
+                <form
+                  onSubmit={emailForm.handleSubmit(onEmailSubmit)}
+                  className="space-y-6"
+                >
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-500">
+                      現在のメールアドレス: {user?.email}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {user?.email_verified
+                        ? "メールアドレスは確認済みです"
+                        : "メールアドレスは未確認です。メールボックスを確認してください"}
+                    </p>
+                  </div>
+                  <FormField
+                    control={emailForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>新しいメールアドレス</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            placeholder="新しいメールアドレス"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          確認メールが新しいメールアドレスに送信されます
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" disabled={isChangingEmail}>
+                    {isChangingEmail ? "更新中..." : "メールアドレスを変更"}
                   </Button>
                 </form>
               </Form>
