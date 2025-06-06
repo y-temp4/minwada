@@ -213,7 +213,7 @@ function CommentItem({
         <CardContent className="pt-0 px-3 sm:px-6 pb-3 sm:pb-6">
           <div className="prose prose-sm prose-gray max-w-none">
             <p className="whitespace-pre-wrap text-sm leading-relaxed break-words">
-              {comment.content}
+              {comment.content.replace(/\n{3,}/g, "\n\n")}
             </p>
           </div>
 

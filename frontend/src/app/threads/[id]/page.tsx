@@ -259,7 +259,9 @@ export default function ThreadDetailPage() {
         {thread.content && (
           <CardContent>
             <div className="prose prose-gray max-w-none">
-              <p className="whitespace-pre-wrap">{thread.content}</p>
+              <p className="whitespace-pre-wrap">
+                {thread.content.replace(/\n{3,}/g, "\n\n")}
+              </p>
             </div>
           </CardContent>
         )}
