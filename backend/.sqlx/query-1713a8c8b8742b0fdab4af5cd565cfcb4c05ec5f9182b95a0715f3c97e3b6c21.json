@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT id\n        FROM users\n        WHERE verification_token = $1\n          AND verification_token_expires_at > $2\n          AND email_verified_at IS NULL\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Timestamptz"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "1713a8c8b8742b0fdab4af5cd565cfcb4c05ec5f9182b95a0715f3c97e3b6c21"
+}
