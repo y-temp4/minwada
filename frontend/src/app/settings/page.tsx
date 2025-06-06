@@ -13,6 +13,7 @@ import {
   useDeleteUser,
   useUpdateProfile,
   useUpdateEmail,
+  useResendVerification,
 } from "@/generated/api";
 import { usernameSchema } from "@/schemas/user";
 
@@ -105,10 +106,12 @@ export default function SettingsPage() {
   const changePasswordMutation = useChangePassword();
   const deleteUserMutation = useDeleteUser();
   const updateEmailMutation = useUpdateEmail();
+  const resendVerificationMutation = useResendVerification();
 
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isChangingEmail, setIsChangingEmail] = useState(false);
+  const [isResendingVerification, setIsResendingVerification] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteConfirmPassword, setDeleteConfirmPassword] = useState("");
   const [deleteError, setDeleteError] = useState("");
@@ -225,6 +228,28 @@ export default function SettingsPage() {
       toast.error("メールアドレスの更新に失敗しました");
     } finally {
       setIsChangingEmail(false);
+    }
+  }
+
+  // メール確認の再送信ハンドラー
+  async function handleResendVerification() {
+    if (!user) return;
+
+    // 既に確認済みの場合は再送信しない
+    if (user.email_verified) {
+      toast.info("メールアドレスは既に確認済みです");
+      return;
+    }
+
+    setIsResendingVerification(true);
+    try {
+      await resendVerificationMutation.mutateAsync();
+      toast.success("確認メールを再送信しました");
+    } catch (error) {
+      console.error("Verification email resend failed:", error);
+      toast.error("確認メールの再送信に失敗しました");
+    } finally {
+      setIsResendingVerification(false);
     }
   }
 
@@ -418,6 +443,20 @@ export default function SettingsPage() {
                         ? "メールアドレスは確認済みです"
                         : "メールアドレスは未確認です。メールボックスを確認してください"}
                     </p>
+                    {!user?.email_verified && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="mt-2"
+                        onClick={handleResendVerification}
+                        disabled={isResendingVerification}
+                      >
+                        {isResendingVerification
+                          ? "送信中..."
+                          : "確認メールを再送信"}
+                      </Button>
+                    )}
                   </div>
                   <FormField
                     control={emailForm.control}
