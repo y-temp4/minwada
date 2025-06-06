@@ -103,6 +103,11 @@ pub async fn create_comment(
 ) -> Result<(StatusCode, Json<CommentResponse>), AppError> {
     // Validate input
     payload.validate()?;
+    
+    // メール認証が完了しているか確認
+    if !current_user.email_verified {
+        return Err(AppError::EmailVerificationRequired);
+    }
 
     // Check if thread exists
     let thread_exists =
@@ -299,4 +304,60 @@ fn build_comment_tree(comments: Vec<CommentWithUser>) -> Vec<CommentResponse> {
     }
 
     root_comments
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use axum::http::StatusCode;
+    use crate::test_utils;
+    use sqlx::PgPool;
+
+    #[sqlx::test]
+    async fn test_create_comment_success(pool: PgPool) {
+        // テスト：メール認証済みユーザーがコメントを正常に作成できる
+        let user = test_utils::create_test_user(&pool, true).await;
+        let thread_id = test_utils::create_test_thread(&pool, user.id, "Test Thread", "Content").await;
+        
+        let request = CreateCommentRequest {
+            content: "This is a test comment".to_string(),
+            parent_id: None,
+        };
+
+        let result = create_comment(
+            State(pool),
+            Path(thread_id),
+            Extension(user),
+            Json(request),
+        ).await;
+
+        assert!(result.is_ok());
+        let (status, _) = result.unwrap();
+        assert_eq!(status, StatusCode::CREATED);
+    }
+
+    #[sqlx::test]
+    async fn test_create_comment_email_not_verified(pool: PgPool) {
+        // テスト：メール認証していないユーザーがコメント作成を試みるとエラーになる
+        let user = test_utils::create_test_user(&pool, false).await;
+        let thread_id = test_utils::create_test_thread(&pool, user.id, "Test Thread", "Content").await;
+        
+        let request = CreateCommentRequest {
+            content: "This is a test comment".to_string(),
+            parent_id: None,
+        };
+
+        let result = create_comment(
+            State(pool),
+            Path(thread_id),
+            Extension(user),
+            Json(request),
+        ).await;
+
+        assert!(result.is_err());
+        match result.unwrap_err() {
+            AppError::EmailVerificationRequired => (),
+            err => panic!("Expected EmailVerificationRequired, got {:?}", err),
+        }
+    }
 }

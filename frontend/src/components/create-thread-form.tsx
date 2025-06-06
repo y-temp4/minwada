@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, LogIn } from "lucide-react";
+import { Plus, LogIn, AlertCircle } from "lucide-react";
 import { useCreateThread, getGetThreadsQueryKey } from "@/generated/api";
 import { useAuth } from "@/providers/auth-provider";
 
@@ -41,7 +41,7 @@ const createThreadSchema = z.object({
 type CreateThreadForm = z.infer<typeof createThreadSchema>;
 
 export function CreateThreadForm() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, isEmailVerified, loading } = useAuth();
   const queryClient = useQueryClient();
   const form = useForm<CreateThreadForm>({
     resolver: zodResolver(createThreadSchema),
@@ -71,6 +71,11 @@ export function CreateThreadForm() {
   const onSubmit = (data: CreateThreadForm) => {
     if (!isAuthenticated) {
       toast.error("スレッドを作成するにはログインが必要です");
+      return;
+    }
+
+    if (!isEmailVerified) {
+      toast.error("スレッドを作成するにはメールアドレスの認証が必要です");
       return;
     }
 
@@ -127,6 +132,39 @@ export function CreateThreadForm() {
               </Button>
               <Button variant="outline" asChild>
                 <Link href="/register">新規登録</Link>
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // メールアドレス認証が完了していない場合
+  if (!isEmailVerified) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Plus className="h-5 w-5 mr-2" />
+            新しいスレッドを作成
+          </CardTitle>
+          <CardDescription>
+            コミュニティと新しい議論を始めましょう
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <AlertCircle className="h-12 w-12 mx-auto text-amber-500 mb-4" />
+            <h3 className="text-lg font-semibold mb-2">
+              メールアドレスの認証が必要です
+            </h3>
+            <p className="text-gray-600 mb-4">
+              新しいスレッドを作成するにはメールアドレスの認証が必要です。
+            </p>
+            <div className="space-x-2">
+              <Button asChild>
+                <Link href="/settings">認証ページへ移動</Link>
               </Button>
             </div>
           </div>

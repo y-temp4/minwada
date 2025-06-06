@@ -24,6 +24,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   isAuthenticated: boolean;
+  isEmailVerified: boolean;
   login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshTokens: () => Promise<void>;
@@ -47,6 +48,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const isEmailVerified = user?.email_verified ?? true;
 
   const logoutMutation = useLogout();
   const refreshTokenMutation = useRefreshToken();
@@ -197,6 +200,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     loading,
     isAuthenticated,
+    isEmailVerified,
     login,
     logout,
     refreshTokens,

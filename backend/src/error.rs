@@ -55,6 +55,9 @@ pub enum AppError {
 
     #[error("UUID parse error: {0}")]
     UuidParse(#[from] uuid::Error),
+
+    #[error("Email verification required")]
+    EmailVerificationRequired,
 }
 
 // Manual implementation of From trait for argon2 errors
@@ -126,6 +129,10 @@ impl IntoResponse for AppError {
                     "Configuration error".to_string(),
                 )
             }
+            AppError::EmailVerificationRequired => (
+                StatusCode::FORBIDDEN,
+                "メールアドレスの認証が必要です".to_string(),
+            ),
             AppError::Reqwest(ref err) => {
                 tracing::error!("HTTP client error: {:?}", err);
                 (

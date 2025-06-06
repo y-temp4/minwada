@@ -102,18 +102,15 @@ type EmailFormValues = z.infer<typeof emailFormSchema>;
 export default function SettingsPage() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const queryClient = useQueryClient();
+
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
   const deleteUserMutation = useDeleteUser();
   const updateEmailMutation = useUpdateEmail();
   const resendVerificationMutation = useResendVerification();
 
-  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [isChangingEmail, setIsChangingEmail] = useState(false);
-  const [isResendingVerification, setIsResendingVerification] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [deleteConfirmPassword, setDeleteConfirmPassword] = useState("");
   const [deleteError, setDeleteError] = useState("");
 
   // プロフィール更新フォーム
@@ -143,13 +140,10 @@ export default function SettingsPage() {
     },
   });
 
-  const queryClient = useQueryClient();
-
   // プロフィール更新の送信ハンドラー
   async function onProfileSubmit(data: ProfileFormValues) {
     if (!user) return;
 
-    setIsUpdatingProfile(true);
     try {
       await updateProfileMutation.mutateAsync({
         data: {
@@ -167,8 +161,6 @@ export default function SettingsPage() {
     } catch (error) {
       console.error("Profile update failed:", error);
       toast.error("プロフィールの更新に失敗しました");
-    } finally {
-      setIsUpdatingProfile(false);
     }
   }
 
@@ -176,7 +168,6 @@ export default function SettingsPage() {
   async function onPasswordSubmit(data: PasswordFormValues) {
     if (!user) return;
 
-    setIsChangingPassword(true);
     try {
       await changePasswordMutation.mutateAsync({
         data: {
@@ -189,8 +180,6 @@ export default function SettingsPage() {
     } catch (error) {
       console.error("Password change failed:", error);
       toast.error("パスワードの変更に失敗しました");
-    } finally {
-      setIsChangingPassword(false);
     }
   }
 
@@ -207,7 +196,6 @@ export default function SettingsPage() {
       return;
     }
 
-    setIsChangingEmail(true);
     try {
       await updateEmailMutation.mutateAsync({
         data: {
@@ -226,8 +214,6 @@ export default function SettingsPage() {
     } catch (error) {
       console.error("Email update failed:", error);
       toast.error("メールアドレスの更新に失敗しました");
-    } finally {
-      setIsChangingEmail(false);
     }
   }
 
@@ -241,25 +227,17 @@ export default function SettingsPage() {
       return;
     }
 
-    setIsResendingVerification(true);
     try {
       await resendVerificationMutation.mutateAsync();
       toast.success("確認メールを再送信しました");
     } catch (error) {
       console.error("Verification email resend failed:", error);
       toast.error("確認メールの再送信に失敗しました");
-    } finally {
-      setIsResendingVerification(false);
     }
   }
 
   // アカウント削除のハンドラー
   async function handleDeleteAccount() {
-    if (!deleteConfirmPassword) {
-      setDeleteError("パスワードを入力してください");
-      return;
-    }
-
     try {
       // ユーザー削除APIを呼び出す
       await deleteUserMutation.mutateAsync();
@@ -332,8 +310,13 @@ export default function SettingsPage() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" disabled={isUpdatingProfile}>
-                    {isUpdatingProfile ? "更新中..." : "プロフィールを更新"}
+                  <Button
+                    type="submit"
+                    disabled={updateProfileMutation.isPending}
+                  >
+                    {updateProfileMutation.isPending
+                      ? "更新中..."
+                      : "プロフィールを更新"}
                   </Button>
                 </form>
               </Form>
@@ -410,8 +393,13 @@ export default function SettingsPage() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" disabled={isChangingPassword}>
-                    {isChangingPassword ? "変更中..." : "パスワードを変更"}
+                  <Button
+                    type="submit"
+                    disabled={changePasswordMutation.isPending}
+                  >
+                    {changePasswordMutation.isPending
+                      ? "変更中..."
+                      : "パスワードを変更"}
                   </Button>
                 </form>
               </Form>
@@ -450,9 +438,9 @@ export default function SettingsPage() {
                         size="sm"
                         className="mt-2"
                         onClick={handleResendVerification}
-                        disabled={isResendingVerification}
+                        disabled={resendVerificationMutation.isPending}
                       >
-                        {isResendingVerification
+                        {resendVerificationMutation.isPending
                           ? "送信中..."
                           : "確認メールを再送信"}
                       </Button>
@@ -478,8 +466,13 @@ export default function SettingsPage() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" disabled={isChangingEmail}>
-                    {isChangingEmail ? "更新中..." : "メールアドレスを変更"}
+                  <Button
+                    type="submit"
+                    disabled={updateEmailMutation.isPending}
+                  >
+                    {updateEmailMutation.isPending
+                      ? "更新中..."
+                      : "メールアドレスを変更"}
                   </Button>
                 </form>
               </Form>
@@ -502,7 +495,14 @@ export default function SettingsPage() {
                 onOpenChange={setIsDeleteDialogOpen}
               >
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive">アカウントを削除</Button>
+                  <Button
+                    variant="destructive"
+                    disabled={deleteUserMutation.isPending}
+                  >
+                    {deleteUserMutation.isPending
+                      ? "削除中..."
+                      : "アカウントを削除"}
+                  </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
@@ -513,24 +513,14 @@ export default function SettingsPage() {
                       この操作は取り消せません。すべての投稿、コメント、アカウント情報が完全に削除されます。
                     </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <div className="space-y-4 py-4">
-                    <p className="text-sm font-medium">
-                      確認のためパスワードを入力してください
-                    </p>
-                    <Input
-                      type="password"
-                      placeholder="パスワード"
-                      value={deleteConfirmPassword}
-                      onChange={(e) => setDeleteConfirmPassword(e.target.value)}
-                    />
-                    {deleteError && (
+                  {deleteError && (
+                    <div className="mt-4">
                       <p className="text-sm text-red-500">{deleteError}</p>
-                    )}
-                  </div>
+                    </div>
+                  )}
                   <AlertDialogFooter>
                     <AlertDialogCancel
                       onClick={() => {
-                        setDeleteConfirmPassword("");
                         setDeleteError("");
                       }}
                     >
