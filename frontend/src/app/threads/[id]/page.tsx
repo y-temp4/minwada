@@ -114,56 +114,54 @@ export default function ThreadDetailPage() {
   if (threadLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* ナビゲーション */}
-          <div className="mb-6">
-            <Skeleton className="h-10 w-24" />
-          </div>
+        {/* ナビゲーション */}
+        <div className="mb-6">
+          <Skeleton className="h-10 w-24" />
+        </div>
 
-          {/* スレッド詳細 */}
-          <Card className="mb-8">
-            <CardHeader>
-              <div className="flex items-center space-x-4">
-                <Skeleton className="h-12 w-12 rounded-full" />
-                <div className="space-y-2">
-                  <Skeleton className="h-6 w-[300px]" />
-                  <Skeleton className="h-4 w-[200px]" />
-                </div>
+        {/* スレッド詳細 */}
+        <Card className="mb-8">
+          <CardHeader>
+            <div className="flex items-center space-x-4">
+              <Skeleton className="h-12 w-12 rounded-full" />
+              <div className="space-y-2">
+                <Skeleton className="h-6 w-[240px]" />
+                <Skeleton className="h-4 w-[200px]" />
               </div>
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-[80%] mt-2" />
-              <Skeleton className="h-4 w-[60%] mt-2" />
-            </CardContent>
-          </Card>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-[80%] mt-2" />
+            <Skeleton className="h-4 w-[60%] mt-2" />
+          </CardContent>
+        </Card>
 
-          {/* コメントフォーム */}
-          <Card className="mb-8">
-            <CardContent className="p-6">
-              <Skeleton className="h-4 w-[150px] mb-4" />
-              <Skeleton className="h-32 w-full mb-4" />
-              <Skeleton className="h-10 w-[120px]" />
-            </CardContent>
-          </Card>
+        {/* コメントフォーム */}
+        <Card className="mb-8">
+          <CardContent className="p-6">
+            <Skeleton className="h-4 w-[150px] mb-4" />
+            <Skeleton className="h-32 w-full mb-4" />
+            <Skeleton className="h-10 w-[120px]" />
+          </CardContent>
+        </Card>
 
-          {/* コメント一覧 */}
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Card key={i}>
-                <CardHeader>
-                  <div className="flex items-center space-x-3">
-                    <Skeleton className="h-8 w-8 rounded-full" />
-                    <Skeleton className="h-4 w-[150px]" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-[70%] mt-2" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        {/* コメント一覧 */}
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <div className="flex items-center space-x-3">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <Skeleton className="h-4 w-[150px]" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-[70%] mt-2" />
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     );
