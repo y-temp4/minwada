@@ -1,0 +1,72 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            c.id,\n            c.content,\n            c.created_at as \"created_at!\",\n            c.updated_at as \"updated_at!\",\n            c.user_id as \"author_id!\",\n            u.username as \"author_username!\",\n            c.thread_id as \"thread_id!\",\n            t.title as \"thread_title!\",\n            c.parent_id\n        FROM\n            comments c\n        JOIN\n            users u ON c.user_id = u.id\n        JOIN\n            threads t ON c.thread_id = t.id\n        WHERE\n            c.user_id = $1\n        ORDER BY\n            c.created_at DESC\n        LIMIT $2\n        OFFSET $3\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "content",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "created_at!",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 3,
+        "name": "updated_at!",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 4,
+        "name": "author_id!",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 5,
+        "name": "author_username!",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "thread_id!",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 7,
+        "name": "thread_title!",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 8,
+        "name": "parent_id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "597eeea7d939867f17d5c47bc6864fc0d7000b37e6749ac051db5c492d15d4ae"
+}

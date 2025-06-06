@@ -1,0 +1,66 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            t.id,\n            t.title,\n            t.content,\n            t.created_at as \"created_at!\",\n            t.updated_at as \"updated_at!\",\n            t.user_id as \"author_id!\",\n            u.username as \"author_username!\",\n            COALESCE(COUNT(c.id), 0)::bigint as \"comment_count!\"\n        FROM\n            threads t\n        JOIN\n            users u ON t.user_id = u.id\n        LEFT JOIN\n            comments c ON c.thread_id = t.id\n        WHERE\n            t.user_id = $1\n        GROUP BY\n            t.id, u.username\n        ORDER BY\n            t.created_at DESC\n        LIMIT $2\n        OFFSET $3\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "title",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "content",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "created_at!",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 4,
+        "name": "updated_at!",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 5,
+        "name": "author_id!",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 6,
+        "name": "author_username!",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "comment_count!",
+        "type_info": "Int8"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      null
+    ]
+  },
+  "hash": "73abc5cdec24f707ecccd8aa2f50faf74dd461207211ea9f5801f7cedcdb0015"
+}
