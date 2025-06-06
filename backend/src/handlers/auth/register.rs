@@ -87,6 +87,7 @@ pub async fn register(
 
     // ユーザー情報をクローンして非同期処理に渡す
     let user_clone = user.clone();
+
     // 非同期でメール送信
     tokio::spawn(async move {
         let _ = email_sender::send_verification_email(&user_clone, &verification_token).await;
