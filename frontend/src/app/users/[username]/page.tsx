@@ -99,7 +99,7 @@ export default function UserProfilePage() {
   return (
     <Card>
       <CardHeader className="pb-4">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="flex items-center space-x-4">
             <Avatar className="h-20 w-20">
               <AvatarFallback className="bg-orange-100 text-orange-600 text-2xl">
@@ -162,8 +162,8 @@ export default function UserProfilePage() {
                         className="block"
                       >
                         <div className="p-4 rounded-lg border hover:bg-gray-50 transition-colors">
-                          <div className="flex justify-between items-start">
-                            <h4 className="font-medium text-gray-900">
+                          <div className="flex justify-between items-start gap-1">
+                            <h4 className="font-medium text-gray-900 break-all">
                               {thread.title}
                             </h4>
                             <div className="flex items-center text-sm text-gray-500">
@@ -172,7 +172,7 @@ export default function UserProfilePage() {
                             </div>
                           </div>
                           {thread.content && (
-                            <p className="mt-2 text-gray-600 line-clamp-2">
+                            <p className="mt-2 text-gray-600 line-clamp-2 break-all">
                               {thread.content}
                             </p>
                           )}
