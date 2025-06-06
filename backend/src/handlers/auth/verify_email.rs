@@ -38,12 +38,12 @@ pub async fn verify_email(
     State(pool): State<PgPool>,
     Path(token): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
-    let user_id = email_verification::verify_email(&token, &pool).await?;
-    
+    email_verification::verify_email(&token, &pool).await?;
+
     Ok((
         StatusCode::OK,
         Json(VerifyEmailResponse {
-            message: "メールアドレスが正常に検証されました".to_string(),
+            message: "メールアドレスが正常に検証されました。".to_string(),
             verified: true,
         }),
     ))
@@ -75,11 +75,11 @@ pub async fn resend_verification(
     Extension(current_user): Extension<User>,
 ) -> Result<impl IntoResponse, AppError> {
     crate::utils::email_sender::resend_verification_email(current_user.id, &pool).await?;
-    
+
     Ok((
         StatusCode::OK,
         Json(ResendVerificationResponse {
-            message: "検証メールを再送信しました".to_string(),
+            message: "検証メールを再送信しました。".to_string(),
         }),
     ))
 }

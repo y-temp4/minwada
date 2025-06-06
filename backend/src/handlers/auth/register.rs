@@ -209,7 +209,7 @@ mod tests {
     #[sqlx::test]
     async fn test_register_existing_username(pool: PgPool) {
         // 既存のテストユーザーを作成
-        let user_id = seed_test_user(&pool, "existing_user").await;
+        seed_test_user(&pool, "existing_user").await;
 
         // 既存のユーザー名で登録リクエストを作成
         let register_request = RegisterRequest {
