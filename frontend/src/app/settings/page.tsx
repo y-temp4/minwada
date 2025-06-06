@@ -8,6 +8,7 @@ import { z } from "zod";
 import { useAuth } from "@/providers/auth-provider";
 import { toast } from "sonner";
 import { getGetCurrentUserQueryKey, useUpdateProfile } from "@/generated/api";
+import { usernameSchema } from "@/schemas/user";
 
 import {
   Card,
@@ -43,15 +44,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 // プロフィール更新のバリデーションスキーマ
 const profileFormSchema = z.object({
-  username: z
-    .string()
-    .min(3, {
-      message: "ユーザー名は3文字以上である必要があります",
-    })
-    .max(50, {
-      message: "ユーザー名は50文字以下である必要があります",
-    })
-    .optional(),
+  username: usernameSchema.optional(),
   display_name: z
     .string()
     .min(2, {
@@ -133,7 +126,7 @@ export default function SettingsPage() {
     try {
       await updateProfileMutation.mutateAsync({
         data: {
-          username: data.username,
+          username: data.username ? data.username.toLowerCase() : undefined,
           display_name: data.display_name,
           avatar_url: undefined, // 必要に応じて追加
         },
@@ -153,12 +146,18 @@ export default function SettingsPage() {
   }
 
   // パスワード変更の送信ハンドラー
-  async function onPasswordSubmit(_data: PasswordFormValues) {
+  async function onPasswordSubmit(data: PasswordFormValues) {
     if (!user) return;
 
     setIsChangingPassword(true);
     try {
       // TODO: パスワード変更APIが実装されたら置き換える
+      // await changePasswordMutation.mutateAsync({
+      //   data: {
+      //     current_password: data.current_password,
+      //     new_password: data.new_password,
+      //   },
+      // });
       toast.success("パスワードが変更されました");
       passwordForm.reset();
     } catch (error) {

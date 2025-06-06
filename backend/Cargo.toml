@@ -53,6 +53,9 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 # Validation
 validator = { version = "0.17", features = ["derive"] }
+validator_derive = "0.17"
+regex = "1.10"
+lazy_static = "1.4"
 
 # Time
 time = "0.3"

@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useRegister } from "@/generated/api";
 import { useAuth } from "@/providers/auth-provider";
+import { usernameSchema } from "@/schemas/user";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,10 +28,7 @@ import { toast } from "sonner";
 
 const registerSchema = z
   .object({
-    username: z
-      .string()
-      .min(3, "ユーザー名は3文字以上で入力してください")
-      .max(50, "ユーザー名は50文字以下で入力してください"),
+    username: usernameSchema,
     email: z.string().email("有効なメールアドレスを入力してください"),
     password: z
       .string()
@@ -76,7 +74,7 @@ export function RegisterForm() {
     await registerMutation.mutateAsync(
       {
         data: {
-          username: values.username,
+          username: values.username.toLowerCase(),
           email: values.email,
           password: values.password,
           display_name: values.displayName || null,

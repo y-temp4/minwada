@@ -4,15 +4,13 @@ use utoipa::ToSchema;
 use uuid::Uuid;
 use validator::Validate;
 
+use crate::validations::username;
+
 // Request DTOs
 
 #[derive(Debug, Deserialize, Validate, ToSchema)]
 pub struct RegisterRequest {
-    #[validate(length(
-        min = 3,
-        max = 50,
-        message = "Username must be between 3 and 50 characters"
-    ))]
+    #[validate(custom(function = "username::username_validator"))]
     pub username: String,
 
     #[validate(email(message = "Invalid email address"))]

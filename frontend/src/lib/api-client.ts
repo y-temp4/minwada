@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
 // カスタムAxiosインスタンス
 const apiClient = axios.create({
@@ -57,10 +57,10 @@ apiClient.interceptors.response.use(
         // 元のリクエストを再実行
         error.config.headers.Authorization = `Bearer ${newToken}`;
         return apiClient.request(error.config);
-      } catch (refreshError) {
+      } catch {
         // リフレッシュも失敗した場合はログインページにリダイレクト
         localStorage.removeItem("access_token");
-        // window.location.href = "/login";
+        window.location.href = "/login";
       }
     }
     return Promise.reject(error);
@@ -68,14 +68,15 @@ apiClient.interceptors.response.use(
 );
 
 // Orval用のカスタムInstance関数
-export const customInstance = <T>(
+export const customInstance = async <T>(
   config: AxiosRequestConfig,
   options?: AxiosRequestConfig
 ): Promise<T> => {
-  return apiClient({
+  const { data } = await apiClient({
     ...config,
     ...options,
-  }).then(({ data }) => data);
+  });
+  return data;
 };
 
 export default apiClient;

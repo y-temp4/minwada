@@ -6,6 +6,7 @@ mod middleware;
 mod models;
 mod routes;
 mod utils;
+mod validations;
 
 use std::net::SocketAddr;
 

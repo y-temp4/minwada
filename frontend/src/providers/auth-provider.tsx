@@ -7,7 +7,6 @@ import {
   useState,
   ReactNode,
 } from "react";
-import { useRouter } from "next/navigation";
 import { useGetCurrentUser, useLogout, useRefreshToken } from "@/generated/api";
 
 interface User {
@@ -24,7 +23,7 @@ interface AuthContextType {
   loading: boolean;
   isAuthenticated: boolean;
   login: (accessToken: string, refreshToken: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshTokens: () => Promise<void>;
 }
 
@@ -46,7 +45,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const router = useRouter();
 
   const logoutMutation = useLogout();
   const refreshTokenMutation = useRefreshToken();
@@ -101,7 +99,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     if (userError && isAuthenticated) {
       // 401エラーの場合、トークンリフレッシュを試行
-      const errorStatus = (userError as any)?.response?.status;
+      const errorStatus = userError?.status;
       if (errorStatus === 401) {
         refreshTokens().catch(() => {
           handleLogout();
