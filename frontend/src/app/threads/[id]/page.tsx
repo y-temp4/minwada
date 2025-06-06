@@ -20,6 +20,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -247,82 +248,84 @@ export default function ThreadDetailPage() {
                 </CardDescription>
               </div>
             </div>
-            {/* 投票UI */}
-            <div className="flex flex-row sm:flex-col items-center sm:mr-4 gap-2 sm:gap-0">
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="upvote"
-                disabled={isVoting || !user}
-                onClick={() => handleVote("upvote")}
-                className="text-green-600 hover:bg-green-50"
-              >
-                <ThumbsUp className="h-5 w-5" />
-              </Button>
-              <span className="font-bold text-lg mx-2 sm:my-1 select-none min-w-[2rem] text-center">
-                {thread.upvote_count - thread.downvote_count}
-              </span>
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="downvote"
-                disabled={isVoting || !user}
-                onClick={() => handleVote("downvote")}
-                className="text-red-600 hover:bg-red-50"
-              >
-                <ThumbsDown className="h-5 w-5" />
-              </Button>
-            </div>
-            {user && thread.user && user.id === thread.user.id && (
-              <div className="flex-shrink-0 mt-2 sm:mt-0">
-                <Dialog
-                  open={deleteDialogOpen}
-                  onOpenChange={setDeleteDialogOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="icon" className="mr-2">
-                      <Trash2 className="h-5 w-5 text-gray-500" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>スレッドの削除</DialogTitle>
-                      <DialogDescription>
-                        このスレッドを本当に削除してもよろしいですか？
-                      </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          handleDeleteThread();
-                          setDeleteDialogOpen(false);
-                        }}
-                      >
-                        削除
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        onClick={() => setDeleteDialogOpen(false)}
-                      >
-                        キャンセル
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            )}
           </div>
         </CardHeader>
         {thread.content && (
           <CardContent>
             <div className="prose prose-gray max-w-none">
-              <p className="whitespace-pre-wrap">
+              <p className="whitespace-pre-wrap break-all">
                 {thread.content.replace(/\n{3,}/g, "\n\n")}
               </p>
             </div>
           </CardContent>
         )}
+        <CardFooter className="flex items-center justify-between gap-4">
+          {/* 投票UI */}
+          <div className="flex flex-row items-center gap-1">
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="upvote"
+              disabled={isVoting || !user}
+              onClick={() => handleVote("upvote")}
+              className="text-green-600 hover:bg-green-50"
+            >
+              <ThumbsUp className="h-5 w-5" />
+            </Button>
+            <span className="font-bold text-lg mx-1 select-none min-w-[2rem] text-center">
+              {thread.upvote_count - thread.downvote_count}
+            </span>
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="downvote"
+              disabled={isVoting || !user}
+              onClick={() => handleVote("downvote")}
+              className="text-red-600 hover:bg-red-50"
+            >
+              <ThumbsDown className="h-5 w-5" />
+            </Button>
+          </div>
+          {user && thread.user && user.id === thread.user.id && (
+            <div className="flex-shrink-0">
+              <Dialog
+                open={deleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="icon" className="mr-2">
+                    <Trash2 className="h-5 w-5 text-gray-500" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>スレッドの削除</DialogTitle>
+                    <DialogDescription>
+                      このスレッドを本当に削除してもよろしいですか？
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        handleDeleteThread();
+                        setDeleteDialogOpen(false);
+                      }}
+                    >
+                      削除
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setDeleteDialogOpen(false)}
+                    >
+                      キャンセル
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+          )}
+        </CardFooter>
       </Card>
 
       <Separator className="mb-8" />
