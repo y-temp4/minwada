@@ -171,6 +171,8 @@ mod tests {
             email_verified_at: None,
             verification_token: None,
             verification_token_expires_at: None,
+            password_reset_token: None,
+            password_reset_token_expires_at: None,
             created_at: chrono::Utc::now(),
             updated_at: chrono::Utc::now(),
         };
