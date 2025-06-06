@@ -41,6 +41,8 @@ use crate::{config::Config, routes::create_routes};
         handlers::auth::change_password::change_password,
         handlers::auth::verify_email::verify_email,
         handlers::auth::verify_email::resend_verification,
+        handlers::auth::request_password_reset::request_password_reset,
+        handlers::auth::reset_password::reset_password,
 
         // Thread endpoints
         handlers::threads::list::get_threads,
@@ -72,6 +74,9 @@ use crate::{config::Config, routes::create_routes};
             models::auth::LogoutResponse,
             models::auth::AuthResponse,
             models::auth::RefreshTokenRequest,
+            models::auth::RequestPasswordResetRequest,
+            models::auth::ResetPasswordRequest,
+            models::auth::MessageResponse,
 
             // Thread DTOs
             models::threads::CreateThreadRequest,

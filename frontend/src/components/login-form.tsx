@@ -128,6 +128,14 @@ export function LoginForm() {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "ログイン中..." : "ログイン"}
             </Button>
+            <div className="mt-4 flex justify-center">
+              {/* <Button variant="link" className="px-0" asChild>
+                <a href="/register">アカウント登録</a>
+              </Button> */}
+              <Button variant="link" className="px-0" asChild>
+                <a href="/forgot-password">パスワードをお忘れですか？</a>
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>

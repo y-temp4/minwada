@@ -46,6 +46,18 @@ pub struct ChangePasswordRequest {
     pub new_password: String,
 }
 
+#[derive(Debug, Deserialize, Validate, ToSchema)]
+pub struct RequestPasswordResetRequest {
+    #[validate(email(message = "Invalid email address"))]
+    pub email: String,
+}
+
+#[derive(Debug, Deserialize, Validate, ToSchema)]
+pub struct ResetPasswordRequest {
+    #[validate(length(min = 8, max = 100, message = "New password must be between 8 and 100 characters"))]
+    pub new_password: String,
+}
+
 // Response DTOs
 
 #[derive(Debug, Serialize, ToSchema)]

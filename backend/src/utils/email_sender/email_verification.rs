@@ -25,10 +25,9 @@ pub async fn send_verification_email(
         r#"
         <h1>メールアドレスの確認</h1>
         <p>こんにちは、{}さん</p>
-        <p>あなたのメールアドレスを確認するために、以下のリンクをクリックしてください：</p>
+        <p>アカウント登録ありがとうございます。以下のリンクをクリックしてメールアドレスを確認してください：</p>
         <p><a href="{}">メールアドレスを確認する</a></p>
         <p>このリンクは24時間後に期限切れになります。</p>
-        <p>このメールにお心当たりがない場合は、無視していただいて構いません。</p>
         "#,
         user.username, verification_url
     );
@@ -39,13 +38,11 @@ pub async fn send_verification_email(
         
         こんにちは、{}さん
         
-        あなたのメールアドレスを確認するために、以下のリンクをクリックしてください：
+        アカウント登録ありがとうございます。以下のリンクをクリックしてメールアドレスを確認してください：
         
         {}
         
         このリンクは24時間後に期限切れになります。
-        
-        このメールにお心当たりがない場合は、無視していただいて構いません。
         "#,
         user.username, verification_url
     );
@@ -64,20 +61,18 @@ pub async fn send_verification_email(
         .map_err(|e| AppError::Internal(e.to_string()))
 }
 
-// ユーザー作成時のメール検証フロー
+// メール確認フロー開始
 pub async fn start_verification_flow(
     user: &User,
     tx: &mut Transaction<'_, Postgres>,
 ) -> Result<String, AppError> {
+    // トークンの生成と保存
     let verification_token = email_verification::create_verification_token(user.id, tx).await?;
-
-    // トランザクションがコミットされる前に非同期処理を行うとロールバック時に問題が生じる可能性があるため、
-    // ここではトークンのみ生成しておき、呼び出し元でトランザクションコミット後にメール送信を行う
 
     Ok(verification_token)
 }
 
-// メール検証メールの再送信
+// 検証メール再送信
 pub async fn resend_verification_email(user_id: Uuid, pool: &PgPool) -> Result<(), AppError> {
     let mut tx = pool.begin().await.map_err(|e| AppError::Database(e))?;
 
@@ -85,31 +80,37 @@ pub async fn resend_verification_email(user_id: Uuid, pool: &PgPool) -> Result<(
     let user = sqlx::query_as!(
         User,
         r#"
-        SELECT 
-            id, username, email, display_name, avatar_url, 
+        SELECT
+            id,
+            username,
+            email,
+            display_name,
+            avatar_url,
             email_verified::bool as "email_verified!",
             email_verified_at,
             verification_token,
             verification_token_expires_at,
-            created_at as "created_at!", updated_at as "updated_at!"
+            password_reset_token,
+            password_reset_token_expires_at,
+            created_at as "created_at!",
+            updated_at as "updated_at!"
         FROM users
         WHERE id = $1
         "#,
         user_id
     )
-    .fetch_optional(&mut *tx)
+    .fetch_one(&mut *tx)
     .await
-    .map_err(|e| AppError::Database(e))?
-    .ok_or_else(|| AppError::NotFound)?;
+    .map_err(|e| AppError::Database(e))?;
 
-    // 既に検証済みの場合はエラー
-    if user.email_verified_at.is_some() {
+    // 既にメール確認済みの場合はエラー
+    if user.email_verified {
         return Err(AppError::BadRequest(
-            "メールアドレスは既に検証済みです".to_string(),
+            "このメールアドレスは既に確認済みです。".to_string(),
         ));
     }
 
-    // 新しいトークンの生成
+    // 新しい検証トークンの生成
     let verification_token =
         email_verification::create_verification_token(user.id, &mut tx).await?;
 
