@@ -1827,6 +1827,86 @@ export const useUpdateProfile = <TError = ErrorResponse, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 
+/**
+ * Delete the authenticated user's account and all associated data.
+ * @summary Delete the current user account
+ */
+export const deleteUser = (
+  options?: SecondParameter<typeof customInstance>,
+) => {
+  return customInstance<void>(
+    { url: `/api/users/me`, method: "DELETE" },
+    options,
+  );
+};
+
+export const getDeleteUserMutationOptions = <
+  TError = ErrorResponse,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteUser>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteUser>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["deleteUser"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteUser>>,
+    void
+  > = () => {
+    return deleteUser(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteUserMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteUser>>
+>;
+
+export type DeleteUserMutationError = ErrorResponse;
+
+/**
+ * @summary Delete the current user account
+ */
+export const useDeleteUser = <TError = ErrorResponse, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteUser>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteUser>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationOptions = getDeleteUserMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
 export const getUserByUsername = (
   username: string,
   options?: SecondParameter<typeof customInstance>,

@@ -30,16 +30,17 @@ apiClient.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401 && typeof window !== "undefined") {
       // 401エラーの場合、トークンリフレッシュを試行
+      const baseURL =
+        process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+
+      // リフレッシュトークンを取得
+      const refreshToken = localStorage.getItem("refresh_token");
+      if (!refreshToken) {
+        localStorage.removeItem("access_token");
+        return Promise.reject(error);
+      }
+
       try {
-        const baseURL =
-          process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
-        // リフレッシュトークンを取得
-        const refreshToken = localStorage.getItem("refresh_token");
-        if (!refreshToken) {
-          throw new Error("リフレッシュトークンが存在しません");
-        }
-
         const refreshResponse = await axios.post(
           `${baseURL}/api/auth/refresh`,
           { refresh_token: refreshToken },
@@ -60,7 +61,10 @@ apiClient.interceptors.response.use(
       } catch {
         // リフレッシュも失敗した場合はログインページにリダイレクト
         localStorage.removeItem("access_token");
-        window.location.href = "/login";
+        localStorage.removeItem("refresh_token");
+        if (typeof window !== "undefined") {
+          window.location.href = "/login"; // ログインページにリダイレクト
+        }
       }
     }
     return Promise.reject(error);

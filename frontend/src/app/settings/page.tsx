@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import {
   getGetCurrentUserQueryKey,
   useChangePassword,
+  useDeleteUser,
   useUpdateProfile,
 } from "@/generated/api";
 import { usernameSchema } from "@/schemas/user";
@@ -94,6 +95,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
+  const deleteUserMutation = useDeleteUser();
 
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -180,19 +182,15 @@ export default function SettingsPage() {
     }
 
     try {
-      // TODO: アカウント削除APIが実装されたら置き換える
-      // await deleteUserMutation.mutateAsync({
-      //   data: {
-      //     password: deleteConfirmPassword,
-      //   },
-      // });
+      // ユーザー削除APIを呼び出す
+      await deleteUserMutation.mutateAsync();
       toast.success("アカウントが削除されました");
       logout();
       router.push("/");
     } catch (error) {
       console.error("Account deletion failed:", error);
       setDeleteError(
-        "アカウントの削除に失敗しました。パスワードが正しいか確認してください。"
+        "アカウントの削除に失敗しました。もう一度お試しください。"
       );
     }
   }

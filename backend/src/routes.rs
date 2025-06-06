@@ -83,6 +83,7 @@ fn user_routes(pool: PgPool) -> Router<PgPool> {
     let auth_routes = Router::new()
         .route("/me", get(handlers::users::get_current_user))
         .route("/me", put(handlers::users::update_profile))
+        .route("/me", delete(handlers::users::delete_user))
         .route_layer(middleware::from_fn_with_state(
             pool.clone(),
             auth_middleware,
