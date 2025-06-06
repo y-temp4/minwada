@@ -168,6 +168,9 @@ mod tests {
             display_name: None,
             avatar_url: None,
             email_verified: false,
+            email_verified_at: None,
+            verification_token: None,
+            verification_token_expires_at: None,
             created_at: chrono::Utc::now(),
             updated_at: chrono::Utc::now(),
         };

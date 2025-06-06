@@ -74,17 +74,12 @@ pub async fn change_password(
 
 #[cfg(test)]
 mod tests {
+
     use super::*;
-    use crate::{
-        auth::password::hash_password,
-        test_utils::{cleanup_test_user, seed_test_user, setup_test_db},
-    };
+    use crate::{auth::password::hash_password, test_utils::seed_test_user};
 
-    #[tokio::test]
-    async fn test_change_password_success() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_change_password_success(pool: PgPool) {
         // テストユーザーを作成
         let user_id = seed_test_user(&pool, "change_password_test").await;
 
@@ -132,16 +127,10 @@ mod tests {
         let verification =
             verify_password("newpassword456", &updated_credentials.password_hash).unwrap();
         assert!(verification, "New password verification should succeed");
-
-        // テストデータをクリーンアップ
-        cleanup_test_user(&pool, user_id).await;
     }
 
-    #[tokio::test]
-    async fn test_change_password_wrong_current_password() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_change_password_wrong_current_password(pool: PgPool) {
         // テストユーザーを作成
         let user_id = seed_test_user(&pool, "change_password_wrong").await;
 
@@ -185,16 +174,10 @@ mod tests {
                 "Error should be Forbidden"
             );
         }
-
-        // テストデータをクリーンアップ
-        cleanup_test_user(&pool, user_id).await;
     }
 
-    #[tokio::test]
-    async fn test_change_password_invalid_new_password() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_change_password_invalid_new_password(pool: PgPool) {
         // テストユーザーを作成
         let user_id = seed_test_user(&pool, "change_password_invalid").await;
 
@@ -238,8 +221,5 @@ mod tests {
                 "Error should be ValidationError"
             );
         }
-
-        // テストデータをクリーンアップ
-        cleanup_test_user(&pool, user_id).await;
     }
 }

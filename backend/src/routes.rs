@@ -25,6 +25,10 @@ fn api_routes(pool: PgPool) -> Router {
 fn auth_routes(pool: PgPool) -> Router<PgPool> {
     let auth_protected_routes = Router::new()
         .route("/change-password", post(handlers::auth::change_password))
+        .route(
+            "/resend-verification",
+            post(handlers::auth::resend_verification),
+        )
         .route_layer(middleware::from_fn_with_state(
             pool.clone(),
             auth_middleware,
@@ -37,6 +41,7 @@ fn auth_routes(pool: PgPool) -> Router<PgPool> {
         .route("/refresh", post(handlers::auth::refresh_token))
         .route("/google", get(handlers::auth::google_auth))
         .route("/google/callback", get(handlers::auth::google_callback))
+        .route("/verify-email/{token}", post(handlers::auth::verify_email))
         .merge(auth_protected_routes)
 }
 
@@ -84,6 +89,7 @@ fn user_routes(pool: PgPool) -> Router<PgPool> {
         .route("/me", get(handlers::users::get_current_user))
         .route("/me", put(handlers::users::update_profile))
         .route("/me", delete(handlers::users::delete_user))
+        .route("/me/email", put(handlers::users::update_email))
         .route_layer(middleware::from_fn_with_state(
             pool.clone(),
             auth_middleware,

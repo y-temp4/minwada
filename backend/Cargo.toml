@@ -27,6 +27,7 @@ argon2 = "0.5"
 oauth2 = "4.4"
 sha2 = "0.10"
 base64 = "0.21"
+rand = "0.8"
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
@@ -45,7 +46,16 @@ anyhow = "1.0"
 thiserror = "1.0"
 
 # HTTP Client (for OAuth)
-reqwest = { version = "0.11", features = ["json"] }
+reqwest = { version = "0.11", features = ["json", "multipart"] }
+
+# Email
+lettre = { version = "0.11", default-features = false, features = [
+    "builder",
+    "tokio1",
+    "tokio1-native-tls",
+    "smtp-transport",
+] }
+async-trait = "0.1"
 
 # Logging
 tracing = "0.1"

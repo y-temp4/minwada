@@ -39,13 +39,17 @@ import type {
   PublicUserResponse,
   RefreshTokenRequest,
   RegisterRequest,
+  ResendVerificationResponse,
   ThreadListItem,
   ThreadListResponse,
   ThreadResponse,
   UpdateCommentRequest,
+  UpdateEmailRequest,
+  UpdateEmailResponse,
   UpdateProfileRequest,
   UpdateThreadRequest,
   UserResponse,
+  VerifyEmailResponse,
 } from "./schemas";
 
 import { customInstance } from "../lib/api-client";
@@ -719,6 +723,172 @@ export const useRegister = <TError = ErrorResponse, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getRegisterMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * @summary 検証メール再送信
+ */
+export const resendVerification = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ResendVerificationResponse>(
+    { url: `/api/auth/resend-verification`, method: "POST", signal },
+    options,
+  );
+};
+
+export const getResendVerificationMutationOptions = <
+  TError = ErrorResponse,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof resendVerification>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof resendVerification>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["resendVerification"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof resendVerification>>,
+    void
+  > = () => {
+    return resendVerification(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ResendVerificationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof resendVerification>>
+>;
+
+export type ResendVerificationMutationError = ErrorResponse;
+
+/**
+ * @summary 検証メール再送信
+ */
+export const useResendVerification = <
+  TError = ErrorResponse,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof resendVerification>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof resendVerification>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationOptions = getResendVerificationMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * @summary メールアドレス検証
+ */
+export const verifyEmail = (
+  token: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<VerifyEmailResponse>(
+    { url: `/api/auth/verify-email/${token}`, method: "POST", signal },
+    options,
+  );
+};
+
+export const getVerifyEmailMutationOptions = <
+  TError = ErrorResponse,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof verifyEmail>>,
+    TError,
+    { token: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof verifyEmail>>,
+  TError,
+  { token: string },
+  TContext
+> => {
+  const mutationKey = ["verifyEmail"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof verifyEmail>>,
+    { token: string }
+  > = (props) => {
+    const { token } = props ?? {};
+
+    return verifyEmail(token, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type VerifyEmailMutationResult = NonNullable<
+  Awaited<ReturnType<typeof verifyEmail>>
+>;
+
+export type VerifyEmailMutationError = ErrorResponse;
+
+/**
+ * @summary メールアドレス検証
+ */
+export const useVerifyEmail = <TError = ErrorResponse, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof verifyEmail>>,
+      TError,
+      { token: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof verifyEmail>>,
+  TError,
+  { token: string },
+  TContext
+> => {
+  const mutationOptions = getVerifyEmailMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -1907,6 +2077,87 @@ export const useDeleteUser = <TError = ErrorResponse, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getDeleteUserMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+export const updateEmail = (
+  updateEmailRequest: UpdateEmailRequest,
+  options?: SecondParameter<typeof customInstance>,
+) => {
+  return customInstance<UpdateEmailResponse>(
+    {
+      url: `/api/users/me/email`,
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      data: updateEmailRequest,
+    },
+    options,
+  );
+};
+
+export const getUpdateEmailMutationOptions = <
+  TError = ErrorResponse,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateEmail>>,
+    TError,
+    { data: UpdateEmailRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateEmail>>,
+  TError,
+  { data: UpdateEmailRequest },
+  TContext
+> => {
+  const mutationKey = ["updateEmail"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateEmail>>,
+    { data: UpdateEmailRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return updateEmail(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateEmailMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateEmail>>
+>;
+export type UpdateEmailMutationBody = UpdateEmailRequest;
+export type UpdateEmailMutationError = ErrorResponse;
+
+export const useUpdateEmail = <TError = ErrorResponse, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateEmail>>,
+      TError,
+      { data: UpdateEmailRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateEmail>>,
+  TError,
+  { data: UpdateEmailRequest },
+  TContext
+> => {
+  const mutationOptions = getUpdateEmailMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

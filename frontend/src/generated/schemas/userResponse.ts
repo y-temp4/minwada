@@ -7,6 +7,7 @@
  */
 import type { UserResponseAvatarUrl } from "./userResponseAvatarUrl";
 import type { UserResponseDisplayName } from "./userResponseDisplayName";
+import type { UserResponseEmailVerifiedAt } from "./userResponseEmailVerifiedAt";
 
 export interface UserResponse {
   avatar_url?: UserResponseAvatarUrl;
@@ -14,6 +15,7 @@ export interface UserResponse {
   display_name?: UserResponseDisplayName;
   email: string;
   email_verified: boolean;
+  email_verified_at?: UserResponseEmailVerifiedAt;
   id: string;
   updated_at: string;
   username: string;

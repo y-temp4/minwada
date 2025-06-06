@@ -1,7 +1,4 @@
-use axum::{
-    extract::State,
-    Json,
-};
+use axum::{extract::State, Json};
 use sqlx::PgPool;
 
 use crate::{
@@ -13,7 +10,7 @@ use crate::{
         common::ErrorResponse,
         RefreshToken, User,
     },
-    utils::{generate_secure_token, token_hash::hash_refresh_token},
+    utils::{self, token_hash::hash_refresh_token},
 };
 
 #[utoipa::path(
@@ -61,7 +58,7 @@ pub async fn refresh_token(
     )?;
 
     // Generate new refresh token
-    let new_refresh_token = generate_secure_token();
+    let new_refresh_token = utils::generate_secure_token();
     let new_refresh_token_hash = hash_refresh_token(&new_refresh_token);
 
     // Revoke old refresh token and create new one

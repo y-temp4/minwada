@@ -1,5 +1,6 @@
 mod auth;
 mod config;
+mod email;
 mod error;
 mod handlers;
 mod middleware;
@@ -38,6 +39,8 @@ use crate::{config::Config, routes::create_routes};
         handlers::auth::google_auth::google_auth,
         handlers::auth::google_callback::google_callback,
         handlers::auth::change_password::change_password,
+        handlers::auth::verify_email::verify_email,
+        handlers::auth::verify_email::resend_verification,
 
         // Thread endpoints
         handlers::threads::list::get_threads,
@@ -55,6 +58,7 @@ use crate::{config::Config, routes::create_routes};
         // User endpoints
         handlers::users::current_user::get_current_user,
         handlers::users::update_profile::update_profile,
+        handlers::users::update_email::update_email,
         handlers::users::detail::get_user_by_username,
         handlers::users::delete::delete_user,
         handlers::users::threads::get_user_threads,

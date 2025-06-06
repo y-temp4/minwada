@@ -19,6 +19,9 @@ pub struct User {
     pub display_name: Option<String>,
     pub avatar_url: Option<String>,
     pub email_verified: bool,
+    pub email_verified_at: Option<DateTime<Utc>>,
+    pub verification_token: Option<String>,
+    pub verification_token_expires_at: Option<DateTime<Utc>>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }

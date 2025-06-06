@@ -53,13 +53,10 @@ pub async fn get_thread(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::handlers::threads::test_utils::{cleanup_test_data, seed_test_data, setup_test_db};
+    use crate::handlers::threads::test_utils::seed_test_data;
 
-    #[tokio::test]
-    async fn test_get_thread_success() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_get_thread_success(pool: PgPool) {
         // テストデータを準備（ユニークな識別子を使用）
         let (user_id, thread_id) = seed_test_data(&pool, "detail_test").await;
 
@@ -78,16 +75,10 @@ mod tests {
         );
         assert!(thread.content.is_some(), "Thread content should exist");
         assert_eq!(thread.user.id, user_id, "User ID should match");
-
-        // テストデータのクリーンアップ
-        cleanup_test_data(&pool, thread_id, user_id).await;
     }
 
-    #[tokio::test]
-    async fn test_get_thread_not_found() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_get_thread_not_found(pool: PgPool) {
         // 存在しないUUIDを使用
         let non_existent_id = Uuid::new_v4();
 

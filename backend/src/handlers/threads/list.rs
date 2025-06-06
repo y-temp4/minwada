@@ -71,17 +71,12 @@ pub async fn get_threads(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::handlers::threads::test_utils::{
-        cleanup_test_data, create_second_thread, seed_test_data, setup_test_db,
-    };
+    use crate::handlers::threads::test_utils::{create_second_thread, seed_test_data};
 
-    #[tokio::test]
-    async fn test_get_threads() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_get_threads(pool: PgPool) {
         // テストデータを準備（ユニークな識別子を使用）
-        let (user_id, thread_id) = seed_test_data(&pool, "threads_test").await;
+        seed_test_data(&pool, "threads_test").await;
 
         // テスト実行: スレッド一覧を取得
         let query = ThreadQuery {
@@ -100,21 +95,15 @@ mod tests {
         assert!(threads.total > 0, "Should have at least one thread");
         assert_eq!(threads.page, 1, "Page number should be 1");
         assert_eq!(threads.limit, 10, "Limit should be 10");
-
-        // テストデータのクリーンアップ
-        cleanup_test_data(&pool, thread_id, user_id).await;
     }
 
-    #[tokio::test]
-    async fn test_get_threads_pagination() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_get_threads_pagination(pool: PgPool) {
         // 複数のテストデータを準備（ユニークな識別子を使用）
-        let (user_id1, thread_id1) = seed_test_data(&pool, "pagination_test").await;
+        let (user_id1, _thread_id1) = seed_test_data(&pool, "pagination_test").await;
 
         // 2つ目のテストスレッドを作成
-        let thread_id2 = create_second_thread(
+        create_second_thread(
             &pool,
             user_id1,
             "Second Test Thread",
@@ -155,13 +144,5 @@ mod tests {
             result1.0.threads.data[0].id, result2.0.threads.data[0].id,
             "Threads on different pages should be different"
         );
-
-        // テストデータのクリーンアップ
-        cleanup_test_data(&pool, thread_id1, user_id1).await;
-        sqlx::query("DELETE FROM threads WHERE id = $1")
-            .bind(thread_id2)
-            .execute(&pool)
-            .await
-            .expect("Failed to delete second test thread");
     }
 }

@@ -5,6 +5,7 @@ pub mod login;
 pub mod logout;
 pub mod refresh_token;
 pub mod register;
+pub mod verify_email;
 
 pub use change_password::change_password;
 pub use google_auth::google_auth;
@@ -13,3 +14,4 @@ pub use login::login;
 pub use logout::logout;
 pub use refresh_token::refresh_token;
 pub use register::register;
+pub use verify_email::{verify_email, resend_verification};

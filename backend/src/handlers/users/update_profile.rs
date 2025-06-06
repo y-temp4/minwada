@@ -85,13 +85,10 @@ mod tests {
     use super::*;
     use axum::extract::State;
 
-    use crate::test_utils::{cleanup_test_user, seed_test_user, setup_test_db};
+    use crate::test_utils::seed_test_user;
 
-    #[tokio::test]
-    async fn test_update_profile_success() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_update_profile_success(pool: PgPool) {
         // テストユーザーを作成
         let user_id = seed_test_user(&pool, "profile_update_test").await;
 
@@ -132,19 +129,13 @@ mod tests {
             updated_user.avatar_url,
             Some("https://example.com/avatar.png".to_string())
         );
-
-        // テストデータを削除
-        cleanup_test_user(&pool, user_id).await;
     }
 
-    #[tokio::test]
-    async fn test_update_profile_username_exists() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_update_profile_username_exists(pool: PgPool) {
         // 2人のテストユーザーを作成
         let user1_id = seed_test_user(&pool, "profile_update_user1").await;
-        let user2_id = seed_test_user(&pool, "profile_update_user2").await;
+        seed_test_user(&pool, "profile_update_user2").await;
 
         // テスト用のユーザーを取得
         let user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE id = $1")
@@ -176,17 +167,10 @@ mod tests {
             Err(AppError::Conflict(_)) => {} // 期待通り
             _ => panic!("Expected Conflict error"),
         }
-
-        // テストデータを削除
-        cleanup_test_user(&pool, user1_id).await;
-        cleanup_test_user(&pool, user2_id).await;
     }
 
-    #[tokio::test]
-    async fn test_update_profile_no_fields() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_update_profile_no_fields(pool: PgPool) {
         // テストユーザーを作成
         let user_id = seed_test_user(&pool, "profile_update_empty").await;
 
@@ -216,16 +200,10 @@ mod tests {
             Err(AppError::BadRequest(_)) => {} // 期待通り
             _ => panic!("Expected BadRequest error"),
         }
-
-        // テストデータを削除
-        cleanup_test_user(&pool, user_id).await;
     }
 
-    #[tokio::test]
-    async fn test_update_profile_invalid_url() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_update_profile_invalid_url(pool: PgPool) {
         // テストユーザーを作成
         let user_id = seed_test_user(&pool, "profile_update_invalid").await;
 
@@ -255,16 +233,10 @@ mod tests {
             Err(AppError::Validation(_)) => {} // 期待通り
             _ => panic!("Expected Validation error"),
         }
-
-        // テストデータを削除
-        cleanup_test_user(&pool, user_id).await;
     }
 
-    #[tokio::test]
-    async fn test_update_profile_invalid_username() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_update_profile_invalid_username(pool: PgPool) {
         // テストユーザーを作成
         let user_id = seed_test_user(&pool, "profile_update_invalid_username").await;
 
@@ -294,16 +266,10 @@ mod tests {
             Err(AppError::Validation(_)) => {} // 期待通り
             _ => panic!("Expected Validation error"),
         }
-
-        // テストデータを削除
-        cleanup_test_user(&pool, user_id).await;
     }
 
-    #[tokio::test]
-    async fn test_update_profile_username_too_long() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_update_profile_username_too_long(pool: PgPool) {
         // テストユーザーを作成
         let user_id = seed_test_user(&pool, "profile_update_username_too_long").await;
 
@@ -334,8 +300,5 @@ mod tests {
             Err(AppError::Validation(_)) => {} // 期待通り
             _ => panic!("Expected Validation error"),
         }
-
-        // テストデータを削除
-        cleanup_test_user(&pool, user_id).await;
     }
 }

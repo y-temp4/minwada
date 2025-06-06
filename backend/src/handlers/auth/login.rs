@@ -1,25 +1,17 @@
-use axum::{
-    extract::State,
-    Json,
-};
+use axum::{extract::State, Json};
 use sqlx::PgPool;
 use validator::Validate;
 
 use crate::{
-    auth::{
-        jwt::create_jwt_token,
-        password::verify_password,
-    },
+    auth::{jwt::create_jwt_token, password::verify_password},
     config::Config,
     error::AppError,
     models::{
-        auth::{
-            AuthResponse, LoginRequest, UserInfo,
-        },
+        auth::{AuthResponse, LoginRequest, UserInfo},
         common::ErrorResponse,
         User, UserCredentials,
     },
-    utils::{generate_secure_token, token_hash::hash_refresh_token},
+    utils::{self, token_hash::hash_refresh_token},
 };
 
 #[utoipa::path(
@@ -70,7 +62,7 @@ pub async fn login(
         15, // 15 minutes
     )?;
 
-    let refresh_token = generate_secure_token();
+    let refresh_token = utils::generate_secure_token();
     let refresh_token_hash = hash_refresh_token(&refresh_token);
 
     // Store refresh token

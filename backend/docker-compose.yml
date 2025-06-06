@@ -1,7 +1,7 @@
 services:
   # PostgreSQL Database
   postgres:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: reddit_postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-reddit_db}
@@ -14,5 +14,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d
 
+  # Mailhog (for email testing in development)
+  mailhog:
+    image: mailhog/mailhog
+    container_name: reddit_mailhog
+    ports:
+      - "${MAILHOG_PORT:-1025}:1025" # SMTP server
+      - "${MAILHOG_UI_PORT:-8025}:8025" # Web UI
+
 volumes:
   postgres_data:
+  postgres_test_data:

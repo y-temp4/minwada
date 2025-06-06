@@ -5,9 +5,7 @@ use uuid::Uuid;
 
 // 共通テストユーティリティを再エクスポート
 #[cfg(test)]
-pub use crate::test_utils::{
-    cleanup_test_data, create_test_thread, seed_test_data, setup_test_db
-};
+pub use crate::test_utils::{create_test_thread, seed_test_data};
 
 // 2つ目のテストスレッドを作成する関数（create_test_threadを使用）
 #[cfg(test)]

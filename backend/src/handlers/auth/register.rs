@@ -11,7 +11,7 @@ use crate::{
         common::ErrorResponse,
         User,
     },
-    utils::{generate_secure_token, token_hash::hash_refresh_token},
+    utils::{self, email_sender, token_hash::hash_refresh_token},
 };
 
 #[utoipa::path(
@@ -80,6 +80,18 @@ pub async fn register(
     // Commit transaction
     tx.commit().await?;
 
+    // Generate verification token and send verification email
+    let mut tx = pool.begin().await?;
+    let verification_token = email_sender::start_verification_flow(&user, &mut tx).await?;
+    tx.commit().await?;
+
+    // ユーザー情報をクローンして非同期処理に渡す
+    let user_clone = user.clone();
+    // 非同期でメール送信
+    tokio::spawn(async move {
+        let _ = email_sender::send_verification_email(&user_clone, &verification_token).await;
+    });
+
     // Generate tokens
     let config = Config::from_env()?;
     let access_token = create_jwt_token(
@@ -90,7 +102,7 @@ pub async fn register(
         15, // 15 minutes
     )?;
 
-    let refresh_token = generate_secure_token();
+    let refresh_token = utils::generate_secure_token();
     let refresh_token_hash = hash_refresh_token(&refresh_token);
 
     // Store refresh token
@@ -127,17 +139,11 @@ pub async fn register(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{
-        models::User,
-        test_utils::{cleanup_test_user, seed_test_user, setup_test_db},
-    };
+    use crate::{models::User, test_utils::seed_test_user};
     use axum::http::StatusCode;
 
-    #[tokio::test]
-    async fn test_register_success() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_register_success(pool: PgPool) {
         // テスト用の登録リクエストを作成
         let register_request = RegisterRequest {
             username: "newuser123".to_string(),
@@ -197,16 +203,10 @@ mod tests {
         .expect("Failed to check refresh token");
 
         assert!(token_exists, "Refresh token should exist");
-
-        // テストデータを削除
-        cleanup_test_user(&pool, created_user.id).await;
     }
 
-    #[tokio::test]
-    async fn test_register_existing_username() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_register_existing_username(pool: PgPool) {
         // 既存のテストユーザーを作成
         let user_id = seed_test_user(&pool, "existing_user").await;
 
@@ -229,18 +229,12 @@ mod tests {
             Err(AppError::Conflict(_)) => {} // 期待通り
             _ => panic!("Expected Conflict error"),
         }
-
-        // テストデータを削除
-        cleanup_test_user(&pool, user_id).await;
     }
 
-    #[tokio::test]
-    async fn test_register_existing_email() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_register_existing_email(pool: PgPool) {
         // 既存のテストユーザーを作成
-        let user_id = seed_test_user(&pool, "email_test").await;
+        seed_test_user(&pool, "email_test").await;
 
         // 既存のメールアドレスで登録リクエストを作成
         let register_request = RegisterRequest {
@@ -261,16 +255,10 @@ mod tests {
             Err(AppError::Conflict(_)) => {} // 期待通り
             _ => panic!("Expected Conflict error"),
         }
-
-        // テストデータを削除
-        cleanup_test_user(&pool, user_id).await;
     }
 
-    #[tokio::test]
-    async fn test_register_invalid_password() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_register_invalid_password(pool: PgPool) {
         // 短すぎるパスワードで登録リクエストを作成
         let register_request = RegisterRequest {
             username: "valid_user".to_string(),
@@ -292,11 +280,8 @@ mod tests {
         }
     }
 
-    #[tokio::test]
-    async fn test_register_invalid_email() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_register_invalid_email(pool: PgPool) {
         // 無効なメールアドレスで登録リクエストを作成
         let register_request = RegisterRequest {
             username: "valid_user".to_string(),
@@ -318,11 +303,8 @@ mod tests {
         }
     }
 
-    #[tokio::test]
-    async fn test_register_invalid_username_length() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_register_invalid_username_length(pool: PgPool) {
         // 短すぎるユーザー名で登録リクエストを作成
         let register_request = RegisterRequest {
             username: "ab".to_string(), // 短すぎるユーザー名
@@ -347,11 +329,8 @@ mod tests {
         }
     }
 
-    #[tokio::test]
-    async fn test_register_reserved_username() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_register_reserved_username(pool: PgPool) {
         // 予約語を含むユーザー名で登録リクエストを作成
         let register_request = RegisterRequest {
             username: "admin".to_string(), // 予約語のユーザー名
@@ -373,11 +352,8 @@ mod tests {
         }
     }
 
-    #[tokio::test]
-    async fn test_register_invalid_username_characters() {
-        // テスト用データベースをセットアップ
-        let pool = setup_test_db().await;
-
+    #[sqlx::test]
+    async fn test_register_invalid_username_characters(pool: PgPool) {
         // 無効な文字を含むユーザー名で登録リクエストを作成
         let register_request = RegisterRequest {
             username: "user@name".to_string(), // 特殊文字を含むユーザー名

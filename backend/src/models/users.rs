@@ -30,6 +30,7 @@ pub struct UserResponse {
     pub display_name: Option<String>,
     pub avatar_url: Option<String>,
     pub email_verified: bool,
+    pub email_verified_at: Option<DateTime<Utc>>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -54,6 +55,7 @@ impl From<User> for UserResponse {
             display_name: user.display_name,
             avatar_url: user.avatar_url,
             email_verified: user.email_verified,
+            email_verified_at: user.email_verified_at,
             created_at: user.created_at,
             updated_at: user.updated_at,
         }

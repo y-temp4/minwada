@@ -1,27 +1,9 @@
 #[cfg(test)]
 use chrono::Utc;
 #[cfg(test)]
-use sqlx::{postgres::PgPoolOptions, PgPool, Pool, Postgres};
+use sqlx::PgPool;
 #[cfg(test)]
 use uuid::Uuid;
-
-// テスト用のデータベース設定
-#[cfg(test)]
-pub async fn setup_test_db() -> Pool<Postgres> {
-    // テスト用の.envファイルの設定を読み込む
-    dotenvy::dotenv().ok();
-
-    // データベース接続を取得
-    let database_url =
-        std::env::var("DATABASE_URL").expect("DATABASE_URL must be set in .env file");
-
-    // テスト用のPostgreSQLデータベースに接続
-    PgPoolOptions::new()
-        .max_connections(5)
-        .connect(&database_url)
-        .await
-        .expect("Failed to connect to Postgres")
-}
 
 // テスト用のユーザーデータを作成する関数
 #[cfg(test)]
@@ -91,35 +73,6 @@ pub async fn create_test_thread(pool: &PgPool, user_id: Uuid, title: &str, conte
     thread_id
 }
 
-// テスト終了後にユーザーデータをクリーンアップする関数
-#[cfg(test)]
-pub async fn cleanup_test_user(pool: &PgPool, user_id: Uuid) {
-    // ユーザー認証情報を削除
-    sqlx::query("DELETE FROM user_credentials WHERE user_id = $1")
-        .bind(user_id)
-        .execute(pool)
-        .await
-        .expect("Failed to delete test user credentials");
-
-    // ユーザーを削除
-    sqlx::query("DELETE FROM users WHERE id = $1")
-        .bind(user_id)
-        .execute(pool)
-        .await
-        .expect("Failed to delete test user");
-}
-
-// テスト終了後にスレッドデータをクリーンアップする関数
-#[cfg(test)]
-pub async fn cleanup_test_thread(pool: &PgPool, thread_id: Uuid) {
-    // スレッドを削除
-    sqlx::query("DELETE FROM threads WHERE id = $1")
-        .bind(thread_id)
-        .execute(pool)
-        .await
-        .expect("Failed to delete test thread");
-}
-
 // テスト用のコメントを作成する関数
 #[cfg(test)]
 pub async fn create_test_comment(
@@ -150,17 +103,6 @@ pub async fn create_test_comment(
     comment_id
 }
 
-// テスト終了後にコメントデータをクリーンアップする関数
-#[cfg(test)]
-pub async fn cleanup_test_comment(pool: &PgPool, comment_id: Uuid) {
-    // コメントを削除
-    sqlx::query("DELETE FROM comments WHERE id = $1")
-        .bind(comment_id)
-        .execute(pool)
-        .await
-        .expect("Failed to delete test comment");
-}
-
 // テスト用のユーザーとスレッドデータを作成する関数
 #[cfg(test)]
 pub async fn seed_test_data(pool: &PgPool, username_suffix: &str) -> (Uuid, Uuid) {
@@ -175,14 +117,4 @@ pub async fn seed_test_data(pool: &PgPool, username_suffix: &str) -> (Uuid, Uuid
     let thread_id = create_test_thread(pool, user_id, &title, &content).await;
 
     (user_id, thread_id)
-}
-
-// テスト終了後にユーザーとスレッドデータをクリーンアップする関数
-#[cfg(test)]
-pub async fn cleanup_test_data(pool: &PgPool, thread_id: Uuid, user_id: Uuid) {
-    // スレッドを削除
-    cleanup_test_thread(pool, thread_id).await;
-
-    // ユーザーを削除
-    cleanup_test_user(pool, user_id).await;
 }
