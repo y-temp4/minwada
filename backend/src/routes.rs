@@ -90,8 +90,9 @@ fn user_routes(pool: PgPool) -> Router<PgPool> {
         ));
 
     // 認証不要のルート
-    let public_routes =
-        Router::new().route("/{username}", get(handlers::users::get_user_by_username));
+    let public_routes = Router::new()
+        .route("/{username}", get(handlers::users::get_user_by_username))
+        .route("/{user_id}/threads", get(handlers::users::get_user_threads));
 
     // マージして返す
     auth_routes.merge(public_routes)

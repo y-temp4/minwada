@@ -57,6 +57,7 @@ use crate::{config::Config, routes::create_routes};
         handlers::users::update_profile::update_profile,
         handlers::users::detail::get_user_by_username,
         handlers::users::delete::delete_user,
+        handlers::users::threads::get_user_threads,
     ),
     components(
         schemas(

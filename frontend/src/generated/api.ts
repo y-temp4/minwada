@@ -30,12 +30,14 @@ import type {
   CreateThreadRequest,
   ErrorResponse,
   GetThreadsParams,
+  GetUserThreadsParams,
   LoginRequest,
   LogoutResponse,
   MessageResponse,
   PublicUserResponse,
   RefreshTokenRequest,
   RegisterRequest,
+  ThreadListItem,
   ThreadListResponse,
   ThreadResponse,
   UpdateCommentRequest,
@@ -1906,6 +1908,163 @@ export const useDeleteUser = <TError = ErrorResponse, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient);
 };
+
+/**
+ * @summary ユーザーが投稿したスレッドの一覧を取得します
+ */
+export const getUserThreads = (
+  userId: string,
+  params?: GetUserThreadsParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ThreadListItem[]>(
+    { url: `/api/users/${userId}/threads`, method: "GET", params, signal },
+    options,
+  );
+};
+
+export const getGetUserThreadsQueryKey = (
+  userId: string,
+  params?: GetUserThreadsParams,
+) => {
+  return [`/api/users/${userId}/threads`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetUserThreadsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getUserThreads>>,
+  TError = ErrorResponse,
+>(
+  userId: string,
+  params?: GetUserThreadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getUserThreads>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetUserThreadsQueryKey(userId, params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserThreads>>> = ({
+    signal,
+  }) => getUserThreads(userId, params, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!userId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getUserThreads>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetUserThreadsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getUserThreads>>
+>;
+export type GetUserThreadsQueryError = ErrorResponse;
+
+export function useGetUserThreads<
+  TData = Awaited<ReturnType<typeof getUserThreads>>,
+  TError = ErrorResponse,
+>(
+  userId: string,
+  params: undefined | GetUserThreadsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getUserThreads>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserThreads>>,
+          TError,
+          Awaited<ReturnType<typeof getUserThreads>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetUserThreads<
+  TData = Awaited<ReturnType<typeof getUserThreads>>,
+  TError = ErrorResponse,
+>(
+  userId: string,
+  params?: GetUserThreadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getUserThreads>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserThreads>>,
+          TError,
+          Awaited<ReturnType<typeof getUserThreads>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetUserThreads<
+  TData = Awaited<ReturnType<typeof getUserThreads>>,
+  TError = ErrorResponse,
+>(
+  userId: string,
+  params?: GetUserThreadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getUserThreads>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary ユーザーが投稿したスレッドの一覧を取得します
+ */
+
+export function useGetUserThreads<
+  TData = Awaited<ReturnType<typeof getUserThreads>>,
+  TError = ErrorResponse,
+>(
+  userId: string,
+  params?: GetUserThreadsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getUserThreads>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetUserThreadsQueryOptions(userId, params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
 
 export const getUserByUsername = (
   username: string,

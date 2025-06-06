@@ -6,10 +6,11 @@ import { useAuth } from "@/providers/auth-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, Clock, Edit } from "lucide-react";
+import { CalendarIcon, Clock, Edit, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
-import { useGetUserByUsername } from "@/generated/api";
+import { useGetUserByUsername, useGetUserThreads } from "@/generated/api";
+import Link from "next/link";
 
 export default function UserProfilePage() {
   const { username } = useParams<{ username: string }>();
@@ -20,7 +21,7 @@ export default function UserProfilePage() {
   // useGetUserByUsernameフックを使用してユーザー情報を取得
   const {
     data: user,
-    isLoading: loading,
+    isLoading: userLoading,
     isError,
     error,
   } = useGetUserByUsername(username);
@@ -41,6 +42,14 @@ export default function UserProfilePage() {
     }
   }, [username, currentUser]);
 
+  // ユーザーのスレッド一覧を取得
+  const { data: userThreads, isLoading: threadsLoading } = useGetUserThreads(
+    user?.id || "",
+    { limit: 10, offset: 0 },
+    { query: { enabled: !!user?.id } }
+  );
+
+  const loading = userLoading || threadsLoading;
   const userNotFound = isError;
 
   if (loading) {
@@ -121,10 +130,50 @@ export default function UserProfilePage() {
 
           <div className="mt-6 pt-6 border-t">
             <h3 className="text-lg font-medium">最近の投稿</h3>
-            <div className="mt-4 text-gray-500 text-center py-8">
-              <Clock className="h-12 w-12 mx-auto text-gray-300" />
-              <p className="mt-2">まだ投稿がありません</p>
-            </div>
+            {threadsLoading ? (
+              <div className="flex justify-center items-center h-32">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+              </div>
+            ) : userThreads && userThreads.length > 0 ? (
+              <div className="mt-4 space-y-4">
+                {userThreads.map((thread) => (
+                  <Link
+                    href={`/threads/${thread.id}`}
+                    key={thread.id}
+                    className="block"
+                  >
+                    <div className="p-4 rounded-lg border hover:bg-gray-50 transition-colors">
+                      <div className="flex justify-between items-start">
+                        <h4 className="font-medium text-gray-900">
+                          {thread.title}
+                        </h4>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <MessageSquare className="h-4 w-4 mr-1" />
+                          <span>{thread.comment_count}</span>
+                        </div>
+                      </div>
+                      {thread.content && (
+                        <p className="mt-2 text-gray-600 line-clamp-2">
+                          {thread.content}
+                        </p>
+                      )}
+                      <div className="mt-2 text-xs text-gray-500">
+                        {format(
+                          new Date(thread.created_at),
+                          "yyyy年MM月dd日 HH:mm",
+                          { locale: ja }
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-4 text-gray-500 text-center py-8">
+                <Clock className="h-12 w-12 mx-auto text-gray-300" />
+                <p className="mt-2">まだ投稿がありません</p>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>
