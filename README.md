@@ -48,51 +48,49 @@ reddit-sample/
 
 ## 開発環境セットアップ
 
-### 1. バックエンド
+### 必要なツール
+
+- asdf
+- Docker Compose
+- cargo-watch
+- just
+
+### インストール手順
+
+#### 事前準備
 
 ```bash
-cd backend
-
-# 環境変数設定
-cp .env.example .env
-
-# データベース起動
-docker-compose up -d
-
-# Rust依存関係インストール & 実行
-cargo run
+$ asdf install
+$ cargo install cargo-watch
 ```
 
-### 2. フロントエンド
+#### バックエンド
+
+```shell
+$ cd backend
+$ cp .env.example .env
+```
+
+#### フロントエンド
+
+```shell
+$ cd frontend
+$ cp .env.example .env.local
+$ npm ci
+```
+
+#### 開発環境の立ち上げ
 
 ```bash
-cd frontend
-
-# 環境変数設定
-cp .env.example .env
-
-# 依存関係インストール
-npm install
-
-# shadcn/ui初期化
-npx shadcn-ui@latest init
-
-# APIクライアント生成 (バックエンドが起動している必要がある)
-npm run generate-api
-
-# または、バックエンドAPIの変更を監視して自動で再生成
-npm run generate-api:watch
-
-# 開発サーバー起動
-npm run dev
+$ just dev
 ```
 
-### 3. アクセス
+### アクセス先
 
 - **フロントエンド**: http://localhost:3000
 - **バックエンド API**: http://localhost:8000
 - **OpenAPI Docs**: http://localhost:8000/swagger-ui/
-- **pgAdmin**: http://localhost:8080
+- **MailHog**: http://localhost:8025
 
 ## 開発ワークフロー
 
