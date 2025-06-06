@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useGetThreads } from "@/generated/api";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,11 +19,10 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowBigUp,
+  Zap,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-
-// 投票API呼び出し用のカスタムフックを削除し、generatedのuseVoteThreadを利用
 
 export function ThreadList() {
   const [page, setPage] = useState(1);
@@ -55,6 +54,16 @@ export function ThreadList() {
       setPage(page + 1);
     }
   };
+
+  // リスト最下部へのref
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // ページ切替時にリスト最下部へスクロール
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [page]);
 
   if (isLoading) {
     return (
@@ -108,7 +117,10 @@ export function ThreadList() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">最新のスレッド</h1>
+        <div className="flex items-center space-x-2">
+          <Zap className="h-7 w-7 text-primary" />
+          <h1 className="text-3xl font-bold">最新のスレッド</h1>
+        </div>
         <Button variant="outline" size="sm" onClick={handleRefresh}>
           <RefreshCw className="h-4 w-4 mr-2" />
           更新
@@ -120,7 +132,7 @@ export function ThreadList() {
           <Card key={thread.id} className="hover:shadow-md transition-shadow">
             <CardHeader>
               <div className="flex items-start justify-between">
-                <div className="flex items-center space-x-3">
+                <div className="flex items-start space-x-3">
                   <Avatar>
                     <AvatarFallback className="bg-orange-100 text-orange-600">
                       {thread.user?.username.charAt(0).toUpperCase() || (
@@ -130,7 +142,7 @@ export function ThreadList() {
                   </Avatar>
                   <div>
                     <Link href={`/threads/${thread.id}`}>
-                      <CardTitle className="text-lg hover:text-primary cursor-pointer hover:underline">
+                      <CardTitle className="text-lg hover:text-primary cursor-pointer hover:underline break-all">
                         {thread.title}
                       </CardTitle>
                     </Link>
@@ -154,7 +166,7 @@ export function ThreadList() {
             </CardHeader>
             {thread.content && (
               <CardContent>
-                <p className="text-muted-foreground line-clamp-3">
+                <p className="text-muted-foreground line-clamp-3 break-all">
                   {thread.content}
                 </p>
               </CardContent>
@@ -165,20 +177,22 @@ export function ThreadList() {
 
       {/* ページネーション */}
       {paginationData?.total_pages && paginationData.total_pages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-1">
           <Button
             variant="outline"
             onClick={handlePreviousPage}
             disabled={page <= 1}
+            className="flex items-center gap-1"
           >
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            前のページ
+            <ChevronLeft className="h-4 w-4" />
+            <span className="hidden sm:inline-block">前のページ</span>
           </Button>
 
           <span className="text-sm text-gray-600">
             ページ {page} / {paginationData.total_pages}
             {paginationData.total && (
               <>
+                {" "}
                 ({paginationData.total} 件中{" "}
                 {Math.min((page - 1) * limit + 1, paginationData.total)} -{" "}
                 {Math.min(page * limit, paginationData.total)} 件表示)
@@ -192,9 +206,10 @@ export function ThreadList() {
             disabled={
               !paginationData?.total_pages || page >= paginationData.total_pages
             }
+            className="flex items-center gap-1"
           >
-            次のページ
-            <ChevronRight className="h-4 w-4 ml-2" />
+            <span className="hidden sm:inline-block">次のページ</span>
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       )}
@@ -212,6 +227,7 @@ export function ThreadList() {
           </CardContent>
         </Card>
       )}
+      <div ref={bottomRef} />
     </div>
   );
 }
