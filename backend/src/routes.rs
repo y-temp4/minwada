@@ -42,8 +42,14 @@ fn auth_routes(pool: PgPool) -> Router<PgPool> {
         .route("/google", get(handlers::auth::google_auth))
         .route("/google/callback", get(handlers::auth::google_callback))
         .route("/verify-email/{token}", post(handlers::auth::verify_email))
-        .route("/password-reset/request", post(handlers::auth::request_password_reset))
-        .route("/password-reset/{token}", post(handlers::auth::reset_password))
+        .route(
+            "/password-reset/request",
+            post(handlers::auth::request_password_reset),
+        )
+        .route(
+            "/password-reset/{token}",
+            post(handlers::auth::reset_password),
+        )
         .merge(auth_protected_routes)
 }
 

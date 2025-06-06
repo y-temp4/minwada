@@ -18,4 +18,4 @@ pub use refresh_token::refresh_token;
 pub use register::register;
 pub use request_password_reset::request_password_reset;
 pub use reset_password::reset_password;
-pub use verify_email::{verify_email, resend_verification};
+pub use verify_email::{resend_verification, verify_email};

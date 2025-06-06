@@ -42,7 +42,11 @@ pub struct ChangePasswordRequest {
     #[validate(length(min = 1, message = "Current password is required"))]
     pub current_password: String,
 
-    #[validate(length(min = 8, max = 100, message = "New password must be between 8 and 100 characters"))]
+    #[validate(length(
+        min = 8,
+        max = 100,
+        message = "New password must be between 8 and 100 characters"
+    ))]
     pub new_password: String,
 }
 
@@ -54,7 +58,11 @@ pub struct RequestPasswordResetRequest {
 
 #[derive(Debug, Deserialize, Validate, ToSchema)]
 pub struct ResetPasswordRequest {
-    #[validate(length(min = 8, max = 100, message = "New password must be between 8 and 100 characters"))]
+    #[validate(length(
+        min = 8,
+        max = 100,
+        message = "New password must be between 8 and 100 characters"
+    ))]
     pub new_password: String,
 }
 
