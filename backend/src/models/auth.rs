@@ -37,6 +37,15 @@ pub struct RefreshTokenRequest {
     pub refresh_token: String,
 }
 
+#[derive(Debug, Deserialize, Validate, ToSchema)]
+pub struct ChangePasswordRequest {
+    #[validate(length(min = 1, message = "Current password is required"))]
+    pub current_password: String,
+
+    #[validate(length(min = 8, max = 100, message = "New password must be between 8 and 100 characters"))]
+    pub new_password: String,
+}
+
 // Response DTOs
 
 #[derive(Debug, Serialize, ToSchema)]
@@ -61,6 +70,11 @@ pub struct UserInfo {
 
 #[derive(Debug, Serialize, ToSchema)]
 pub struct LogoutResponse {
+    pub message: String,
+}
+
+#[derive(Debug, Serialize, ToSchema)]
+pub struct MessageResponse {
     pub message: String,
 }
 

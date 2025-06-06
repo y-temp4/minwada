@@ -7,6 +7,7 @@
  */
 
 export * from "./authResponse";
+export * from "./changePasswordRequest";
 export * from "./commentListResponse";
 export * from "./commentResponse";
 export * from "./commentResponseParentId";
@@ -21,6 +22,7 @@ export * from "./errorResponse";
 export * from "./getThreadsParams";
 export * from "./loginRequest";
 export * from "./logoutResponse";
+export * from "./messageResponse";
 export * from "./paginatedResponseThreadResponse";
 export * from "./paginatedResponseThreadResponseDataItem";
 export * from "./paginatedResponseThreadResponseDataItemContent";

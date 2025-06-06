@@ -1,3 +1,4 @@
+pub mod change_password;
 pub mod google_auth;
 pub mod google_callback;
 pub mod login;
@@ -5,6 +6,7 @@ pub mod logout;
 pub mod refresh_token;
 pub mod register;
 
+pub use change_password::change_password;
 pub use google_auth::google_auth;
 pub use google_callback::google_callback;
 pub use login::login;

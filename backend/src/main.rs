@@ -37,6 +37,7 @@ use crate::{config::Config, routes::create_routes};
         handlers::auth::refresh_token::refresh_token,
         handlers::auth::google_auth::google_auth,
         handlers::auth::google_callback::google_callback,
+        handlers::auth::change_password::change_password,
 
         // Thread endpoints
         handlers::threads::list::get_threads,

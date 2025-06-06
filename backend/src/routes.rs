@@ -15,14 +15,21 @@ pub fn create_routes(pool: PgPool) -> Router {
 
 fn api_routes(pool: PgPool) -> Router {
     Router::new()
-        .nest("/auth", auth_routes())
+        .nest("/auth", auth_routes(pool.clone()))
         .nest("/threads", thread_routes(pool.clone()))
         .nest("/comments", comment_routes(pool.clone()))
         .nest("/users", user_routes(pool.clone()))
         .with_state(pool)
 }
 
-fn auth_routes() -> Router<PgPool> {
+fn auth_routes(pool: PgPool) -> Router<PgPool> {
+    let auth_protected_routes = Router::new()
+        .route("/change-password", post(handlers::auth::change_password))
+        .route_layer(middleware::from_fn_with_state(
+            pool.clone(),
+            auth_middleware,
+        ));
+
     Router::new()
         .route("/register", post(handlers::auth::register))
         .route("/login", post(handlers::auth::login))
@@ -30,6 +37,7 @@ fn auth_routes() -> Router<PgPool> {
         .route("/refresh", post(handlers::auth::refresh_token))
         .route("/google", get(handlers::auth::google_auth))
         .route("/google/callback", get(handlers::auth::google_callback))
+        .merge(auth_protected_routes)
 }
 
 fn thread_routes(pool: PgPool) -> Router<PgPool> {

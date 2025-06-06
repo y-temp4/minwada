@@ -23,6 +23,7 @@ import type {
 
 import type {
   AuthResponse,
+  ChangePasswordRequest,
   CommentListResponse,
   CommentResponse,
   CreateCommentRequest,
@@ -31,6 +32,7 @@ import type {
   GetThreadsParams,
   LoginRequest,
   LogoutResponse,
+  MessageResponse,
   PublicUserResponse,
   RefreshTokenRequest,
   RegisterRequest,
@@ -45,6 +47,89 @@ import type {
 import { customInstance } from "../lib/api-client";
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+export const changePassword = (
+  changePasswordRequest: ChangePasswordRequest,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<MessageResponse>(
+    {
+      url: `/api/auth/change-password`,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      data: changePasswordRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getChangePasswordMutationOptions = <
+  TError = ErrorResponse,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof changePassword>>,
+    TError,
+    { data: ChangePasswordRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof changePassword>>,
+  TError,
+  { data: ChangePasswordRequest },
+  TContext
+> => {
+  const mutationKey = ["changePassword"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof changePassword>>,
+    { data: ChangePasswordRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return changePassword(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ChangePasswordMutationResult = NonNullable<
+  Awaited<ReturnType<typeof changePassword>>
+>;
+export type ChangePasswordMutationBody = ChangePasswordRequest;
+export type ChangePasswordMutationError = ErrorResponse;
+
+export const useChangePassword = <TError = ErrorResponse, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof changePassword>>,
+      TError,
+      { data: ChangePasswordRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof changePassword>>,
+  TError,
+  { data: ChangePasswordRequest },
+  TContext
+> => {
+  const mutationOptions = getChangePasswordMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
 
 export const googleAuth = (
   options?: SecondParameter<typeof customInstance>,

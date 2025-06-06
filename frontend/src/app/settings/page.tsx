@@ -7,7 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/providers/auth-provider";
 import { toast } from "sonner";
-import { getGetCurrentUserQueryKey, useUpdateProfile } from "@/generated/api";
+import {
+  getGetCurrentUserQueryKey,
+  useChangePassword,
+  useUpdateProfile,
+} from "@/generated/api";
 import { usernameSchema } from "@/schemas/user";
 
 import {
@@ -89,6 +93,7 @@ export default function SettingsPage() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const updateProfileMutation = useUpdateProfile();
+  const changePasswordMutation = useChangePassword();
 
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -151,13 +156,12 @@ export default function SettingsPage() {
 
     setIsChangingPassword(true);
     try {
-      // TODO: パスワード変更APIが実装されたら置き換える
-      // await changePasswordMutation.mutateAsync({
-      //   data: {
-      //     current_password: data.current_password,
-      //     new_password: data.new_password,
-      //   },
-      // });
+      await changePasswordMutation.mutateAsync({
+        data: {
+          current_password: data.current_password,
+          new_password: data.new_password,
+        },
+      });
       toast.success("パスワードが変更されました");
       passwordForm.reset();
     } catch (error) {
