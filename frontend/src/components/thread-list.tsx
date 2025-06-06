@@ -18,14 +18,16 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  ArrowBigUp,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 
+// 投票API呼び出し用のカスタムフックを削除し、generatedのuseVoteThreadを利用
+
 export function ThreadList() {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
-
   const {
     data: threadsResponse,
     isLoading,
@@ -35,8 +37,6 @@ export function ThreadList() {
     page,
     limit,
   });
-
-  console.log("Threads Response:", threadsResponse);
 
   const handleRefresh = () => {
     refetch();
@@ -130,7 +130,7 @@ export function ThreadList() {
                   </Avatar>
                   <div>
                     <Link href={`/threads/${thread.id}`}>
-                      <CardTitle className="text-lg hover:text-primary cursor-pointer">
+                      <CardTitle className="text-lg hover:text-primary cursor-pointer hover:underline">
                         {thread.title}
                       </CardTitle>
                     </Link>
@@ -140,10 +140,16 @@ export function ThreadList() {
                     </CardDescription>
                   </div>
                 </div>
-                <Badge variant="secondary">
-                  <MessageSquare className="h-3 w-3 mr-1" />
-                  {thread.comment_count || 0}
-                </Badge>
+                <div className="flex items-center gap-1.5">
+                  <Badge variant="outline" className="font-medium">
+                    <ArrowBigUp className="h-3.5 w-3.5 mr-1 text-primary" />
+                    {thread.upvote_count - thread.downvote_count}
+                  </Badge>
+                  <Badge variant="secondary">
+                    <MessageSquare className="h-3 w-3 mr-1" />
+                    {thread.comment_count || 0}
+                  </Badge>
+                </div>
               </div>
             </CardHeader>
             {thread.content && (

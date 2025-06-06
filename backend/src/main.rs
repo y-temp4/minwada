@@ -50,6 +50,7 @@ use crate::{config::Config, routes::create_routes};
         handlers::threads::detail::get_thread,
         handlers::threads::update::update_thread,
         handlers::threads::delete::delete_thread,
+        handlers::threads::vote::vote_thread,
 
         // Comment endpoints
         handlers::comments::get_comments,

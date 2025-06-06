@@ -45,6 +45,8 @@ pub struct ThreadResponse {
     pub updated_at: DateTime<Utc>,
     pub user: ThreadUser,
     pub comment_count: u64,
+    pub upvote_count: i32,
+    pub downvote_count: i32,
 }
 
 #[derive(Debug, Serialize, ToSchema)]
@@ -71,6 +73,8 @@ pub struct ThreadWithUser {
     pub content: Option<String>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
+    pub upvote_count: i32,
+    pub downvote_count: i32,
 
     // User fields
     pub user_id: Uuid,
@@ -97,6 +101,8 @@ impl From<ThreadWithUser> for ThreadResponse {
                 avatar_url: thread.user_avatar_url,
             },
             comment_count: thread.comment_count.unwrap_or(0) as u64,
+            upvote_count: thread.upvote_count,
+            downvote_count: thread.downvote_count,
         }
     }
 }

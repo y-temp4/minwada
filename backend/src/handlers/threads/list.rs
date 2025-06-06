@@ -43,12 +43,13 @@ pub async fn get_threads(
         r#"
         SELECT 
             t.id, t.title, t.content, t.created_at, t.updated_at,
+            t.upvote_count, t.downvote_count,
             u.id as user_id, u.username, u.display_name as user_display_name, u.avatar_url as user_avatar_url,
             COUNT(c.id)::bigint as comment_count
         FROM threads t
         JOIN users u ON t.user_id = u.id
         LEFT JOIN comments c ON t.id = c.thread_id
-        GROUP BY t.id, u.id, u.username, u.display_name, u.avatar_url
+        GROUP BY t.id, t.upvote_count, t.downvote_count, u.id, u.username, u.display_name, u.avatar_url
         ORDER BY t.created_at DESC
         LIMIT $1 OFFSET $2
         "#

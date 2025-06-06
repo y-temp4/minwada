@@ -65,3 +65,4 @@ export * from "./userResponseAvatarUrl";
 export * from "./userResponseDisplayName";
 export * from "./userResponseEmailVerifiedAt";
 export * from "./verifyEmailResponse";
+export * from "./voteRequest";

@@ -47,8 +47,9 @@ pub async fn create_thread(
         r#"
         INSERT INTO threads (user_id, title, content)
         VALUES ($1, $2, $3)
-        RETURNING 
+        RETURNING
             id, title, content, created_at, updated_at,
+            0 as upvote_count, 0 as downvote_count,
             $1 as user_id, $4 as username, $5 as user_display_name, $6 as user_avatar_url,
             0::bigint as comment_count
         "#,

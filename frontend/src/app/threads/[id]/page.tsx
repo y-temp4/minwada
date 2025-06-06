@@ -3,7 +3,15 @@
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, MessageSquare, User, Clock, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  MessageSquare,
+  User,
+  Clock,
+  Trash2,
+  ThumbsUp,
+  ThumbsDown,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -22,7 +30,9 @@ import {
   useGetThread,
   useGetComments,
   useDeleteThread,
+  useVoteThread,
   getGetThreadsQueryKey,
+  getGetThreadQueryKey,
 } from "@/generated/api";
 import { CreateCommentForm } from "@/components/create-comment-form";
 import { CommentList } from "@/components/comment-list";
@@ -59,6 +69,7 @@ export default function ThreadDetailPage() {
   const { user } = useAuth();
 
   const { mutate: deleteThread } = useDeleteThread();
+  const { mutate: voteThread, isPending: isVoting } = useVoteThread();
 
   const handleDeleteThread = () => {
     deleteThread(
@@ -74,6 +85,27 @@ export default function ThreadDetailPage() {
         },
         onError: () => {
           toast.error("スレッドの削除に失敗しました");
+        },
+      }
+    );
+  };
+
+  // 投票ハンドラ
+  const handleVote = (voteType: "upvote" | "downvote") => {
+    if (!user) {
+      toast.error("投票にはログインが必要です");
+      return;
+    }
+    voteThread(
+      { id: threadId, data: { vote_type: voteType } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: [...getGetThreadQueryKey(threadId)],
+          });
+        },
+        onError: () => {
+          toast.error("投票に失敗しました");
         },
       }
     );
@@ -189,18 +221,20 @@ export default function ThreadDetailPage() {
       {/* スレッド詳細 */}
       <Card className="mb-8">
         <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-4">
-              <Avatar className="h-12 w-12">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex flex-row sm:flex-row items-start sm:space-x-4 gap-4 flex-1 min-w-0">
+              <Avatar className="h-12 w-12 flex-shrink-0">
                 <AvatarFallback className="bg-orange-100 text-orange-600">
                   {thread.user?.username?.charAt(0).toUpperCase() || (
                     <User className="h-6 w-6" />
                   )}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <CardTitle className="text-2xl">{thread.title}</CardTitle>
-                <CardDescription className="flex items-center space-x-4 mt-2">
+              <div className="min-w-0">
+                <CardTitle className="text-2xl break-all whitespace-pre-line w-full min-w-0">
+                  {thread.title}
+                </CardTitle>
+                <CardDescription className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm">
                   <span>
                     投稿者: {thread.user?.username || "不明なユーザー"}
                   </span>
@@ -215,8 +249,34 @@ export default function ThreadDetailPage() {
                 </CardDescription>
               </div>
             </div>
+            {/* 投票UI */}
+            <div className="flex flex-row sm:flex-col items-center sm:mr-4 gap-2 sm:gap-0">
+              <Button
+                size="icon"
+                variant="ghost"
+                aria-label="upvote"
+                disabled={isVoting || !user}
+                onClick={() => handleVote("upvote")}
+                className="text-green-600 hover:bg-green-50"
+              >
+                <ThumbsUp className="h-5 w-5" />
+              </Button>
+              <span className="font-bold text-lg mx-2 sm:my-1 select-none min-w-[2rem] text-center">
+                {thread.upvote_count - thread.downvote_count}
+              </span>
+              <Button
+                size="icon"
+                variant="ghost"
+                aria-label="downvote"
+                disabled={isVoting || !user}
+                onClick={() => handleVote("downvote")}
+                className="text-red-600 hover:bg-red-50"
+              >
+                <ThumbsDown className="h-5 w-5" />
+              </Button>
+            </div>
             {user && thread.user && user.id === thread.user.id && (
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 mt-2 sm:mt-0">
                 <Dialog
                   open={deleteDialogOpen}
                   onOpenChange={setDeleteDialogOpen}

@@ -13,8 +13,10 @@ export interface ThreadResponse {
   comment_count: number;
   content?: ThreadResponseContent;
   created_at: string;
+  downvote_count: number;
   id: string;
   title: string;
   updated_at: string;
+  upvote_count: number;
   user: ThreadUser;
 }

@@ -52,6 +52,7 @@ import type {
   UpdateThreadRequest,
   UserResponse,
   VerifyEmailResponse,
+  VoteRequest,
 } from "./schemas";
 
 import { customInstance } from "../lib/api-client";
@@ -1749,6 +1750,90 @@ export const useDeleteThread = <TError = ErrorResponse, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getDeleteThreadMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+export const voteThread = (
+  id: string,
+  voteRequest: VoteRequest,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ErrorResponse>(
+    {
+      url: `/api/threads/${id}/vote`,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      data: voteRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getVoteThreadMutationOptions = <
+  TError = ErrorResponse,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof voteThread>>,
+    TError,
+    { id: string; data: VoteRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof voteThread>>,
+  TError,
+  { id: string; data: VoteRequest },
+  TContext
+> => {
+  const mutationKey = ["voteThread"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof voteThread>>,
+    { id: string; data: VoteRequest }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return voteThread(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type VoteThreadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof voteThread>>
+>;
+export type VoteThreadMutationBody = VoteRequest;
+export type VoteThreadMutationError = ErrorResponse;
+
+export const useVoteThread = <TError = ErrorResponse, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof voteThread>>,
+      TError,
+      { id: string; data: VoteRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof voteThread>>,
+  TError,
+  { id: string; data: VoteRequest },
+  TContext
+> => {
+  const mutationOptions = getVoteThreadMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

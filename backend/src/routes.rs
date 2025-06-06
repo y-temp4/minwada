@@ -72,6 +72,7 @@ fn thread_routes(pool: PgPool) -> Router<PgPool> {
             "/{thread_id}/comments",
             post(handlers::comments::create_comment),
         )
+        .route("/{id}/vote", post(handlers::threads::vote_thread))
         .route_layer(middleware::from_fn_with_state(
             pool.clone(),
             auth_middleware,
