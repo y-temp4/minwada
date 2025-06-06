@@ -1,4 +1,4 @@
-FROM rust:1.87 AS builder
+FROM rust:1.87-alpine3.22 AS builder
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ ARG CORS_ORIGIN \
 RUN cargo build --release
 
 # 実行ステージ
-FROM debian:bookworm-slim AS runner
+FROM builder AS runner
 
 WORKDIR /app
 
