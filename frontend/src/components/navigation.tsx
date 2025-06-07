@@ -103,10 +103,10 @@ export function Navigation() {
 
       {isAuthenticated && user && !isEmailVerified && (
         <div className="bg-amber-50 border-t border-b border-amber-200 py-2">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-            <AlertCircle className="h-5 w-5 text-amber-500 mr-2" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center text-sm">
+            <AlertCircle className="h-5 w-5 text-amber-500 mr-2 min-w-5" />
             <p className="text-amber-700">
-              メールアドレスが認証されていません。
+              メールアドレスが認証されていません。登録したメールアドレスに送信されたリンクをクリックして、メールアドレスの認証を行ってください。認証期限が切れている場合は再度
               <Link
                 href="/settings"
                 className="underline ml-1 text-amber-800 hover:text-amber-900"
