@@ -1,13 +1,16 @@
 # 🗣️ みんなの話題
 
 [![Rust](https://img.shields.io/badge/rust-1.87.0-orange.svg?logo=rust)](https://www.rust-lang.org)
-[![Next.js](https://img.shields.io/badge/next.js-15+-black?logo=next.js.svg)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/next.js-15+-black.svg?logo=next.js)](https://nextjs.org/)
 
 [English README](./README.en.md)
 
 > Reddit 風のスレッド・コメントシステムのサンプル実装です。自由に話題を投稿し、コメントを通じてコミュニケーションを楽しめます。
 >
 > （最終更新: 2025 年 6 月 7 日）
+
+> [!WARNING]
+> 本 README を含むプロジェクト内のコードは大半が AI により生成されたものであり、必ずしも正しい内容とは限らない点にご注意ください。
 
 ## ✨ 機能
 
