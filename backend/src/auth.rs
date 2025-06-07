@@ -24,7 +24,7 @@ pub mod jwt {
             email: email.to_string(),
             exp: expiration,
             iat: Utc::now().timestamp() as usize,
-            iss: "reddit-clone".to_string(),
+            iss: "wadai-us".to_string(),
         };
 
         encode(

@@ -2,26 +2,25 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
-    container_name: reddit_postgres
+    container_name: wadai_us_postgres
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-reddit_db}
-      POSTGRES_USER: ${POSTGRES_USER:-reddit_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-reddit_password}
+      POSTGRES_DB: ${POSTGRES_DB:-wadai_us_db}
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
     ports:
       - "${POSTGRES_PORT:-5433}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - wadai_us_postgres_data:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d
 
   # Mailhog (for email testing in development)
   mailhog:
     image: mailhog/mailhog
-    container_name: reddit_mailhog
+    container_name: wadai_us_mailhog
     ports:
       - "${MAILHOG_PORT:-1025}:1025" # SMTP server
       - "${MAILHOG_UI_PORT:-8025}:8025" # Web UI
 
 volumes:
-  postgres_data:
-  postgres_test_data:
+  wadai_us_postgres_data:

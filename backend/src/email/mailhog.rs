@@ -21,7 +21,7 @@ impl EmailSender for MailhogSender {
         let from_email =
             std::env::var("EMAIL_FROM").unwrap_or_else(|_| "noreply@example.com".to_string());
         let from_name =
-            std::env::var("EMAIL_FROM_NAME").unwrap_or_else(|_| "Reddit Sample".to_string());
+            std::env::var("EMAIL_FROM_NAME").unwrap_or_else(|_| "みんなの話題".to_string());
 
         let from = format!("{} <{}>", from_name, from_email)
             .parse::<Mailbox>()

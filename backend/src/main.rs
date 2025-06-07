@@ -110,7 +110,7 @@ use crate::{config::Config, routes::create_routes};
         (name = "users", description = "User management")
     ),
     info(
-        title = "Reddit Clone API",
+        title = "wadai-us API",
         version = "1.0.0",
         description = "A Reddit-like discussion platform API built with Rust and axum"
     )
@@ -129,7 +129,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Load configuration
     let config = Config::from_env()?;
 
-    info!("Starting Reddit Clone API server");
+    info!("Starting wadai-us API server");
     info!("Database URL: {}", config.database_url);
     info!("Server will run on {}:{}", config.host, config.port);
 

@@ -174,43 +174,49 @@ export function ThreadList() {
       </div>
 
       {/* ページネーション */}
-      {paginationData?.total_pages && paginationData.total_pages > 1 && (
-        <div className="flex items-center justify-between gap-1">
-          <Button
-            variant="outline"
-            onClick={handlePreviousPage}
-            disabled={page <= 1}
-            className="flex items-center gap-1"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="hidden sm:inline-block">前のページ</span>
-          </Button>
 
-          <span className="text-sm text-gray-600">
-            ページ {page} / {paginationData.total_pages}
-            {paginationData.total && (
-              <>
-                {" "}
-                ({paginationData.total} 件中{" "}
-                {Math.min((page - 1) * limit + 1, paginationData.total)} -{" "}
-                {Math.min(page * limit, paginationData.total)} 件表示)
-              </>
-            )}
-          </span>
+      {paginationData && paginationData?.total_pages !== 0 ? (
+        <>
+          {paginationData?.total_pages && paginationData.total_pages > 1 && (
+            <div className="flex items-center justify-between gap-1">
+              <Button
+                variant="outline"
+                onClick={handlePreviousPage}
+                disabled={page <= 1}
+                className="flex items-center gap-1"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="hidden sm:inline-block">前のページ</span>
+              </Button>
 
-          <Button
-            variant="outline"
-            onClick={handleNextPage}
-            disabled={
-              !paginationData?.total_pages || page >= paginationData.total_pages
-            }
-            className="flex items-center gap-1"
-          >
-            <span className="hidden sm:inline-block">次のページ</span>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      )}
+              <span className="text-sm text-gray-600">
+                ページ {page} / {paginationData.total_pages}
+                {paginationData.total && (
+                  <>
+                    {" "}
+                    ({paginationData.total} 件中{" "}
+                    {Math.min((page - 1) * limit + 1, paginationData.total)} -{" "}
+                    {Math.min(page * limit, paginationData.total)} 件表示)
+                  </>
+                )}
+              </span>
+
+              <Button
+                variant="outline"
+                onClick={handleNextPage}
+                disabled={
+                  !paginationData?.total_pages ||
+                  page >= paginationData.total_pages
+                }
+                className="flex items-center gap-1"
+              >
+                <span className="hidden sm:inline-block">次のページ</span>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </>
+      ) : null}
 
       {threads.length === 0 && (
         <Card>

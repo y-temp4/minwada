@@ -1,4 +1,3 @@
-# reddit-sampleプロジェクトのjustfile
 # 使用方法: just <コマンド>
 
 # ディレクトリ定義
