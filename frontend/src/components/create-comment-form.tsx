@@ -56,6 +56,11 @@ export function CreateCommentForm({
     e.preventDefault();
     if (!content.trim()) return;
 
+    if (content.length > 1000) {
+      toast.error("コメントは1000文字以内で入力してください");
+      return;
+    }
+
     if (!isAuthenticated) {
       toast.error("コメントを投稿するにはログインが必要です");
       return;
