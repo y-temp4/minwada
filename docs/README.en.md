@@ -41,7 +41,7 @@
 ## 📂 Project Structure
 
 ```
-reddit-sample/
+wadai-us/
 ├── backend/                 # Rust (axum) backend API
 │   ├── src/                 # Source code
 │   │   ├── main.rs          # Entry point
