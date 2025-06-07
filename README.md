@@ -1,29 +1,41 @@
-# みんなの話題
+# 🗣️ みんなの話題
+
+[![Rust](https://img.shields.io/badge/rust-1.87.0-orange.svg?logo=rust)](https://www.rust-lang.org)
+[![Next.js](https://img.shields.io/badge/next.js-15+-black?logo=next.js.svg)](https://nextjs.org/)
 
 [English README](./README.en.md)
 
-Reddit 風のスレッド・コメントシステムのサンプル実装です。
-（最終更新: 2025 年 6 月 6 日）
+> Reddit 風のスレッド・コメントシステムのサンプル実装です。自由に話題を投稿し、コメントを通じてコミュニケーションを楽しめます。
+>
+> （最終更新: 2025 年 6 月 7 日）
 
-## 技術スタック
+## ✨ 機能
+
+- 👤 ユーザー認証（JWT）
+- 📝 スレッド投稿・閲覧
+- 💬 木構造コメントシステム
+- 👨‍💻 ユーザープロフィールページ（投稿したスレッド・コメント一覧表示）
+- 📱 レスポンシブデザイン
+
+## 🛠️ 技術スタック
 
 ### バックエンド
 
-- **Language**: Rust
-- **Framework**: axum
-- **Database**: PostgreSQL
-- **ORM**: sqlx
-- **認証**: JWT + OAuth2 (Google、予定)
-- **API 仕様**: OpenAPI (utoipa)
+- **Language**: [Rust](https://www.rust-lang.org/) 🦀
+- **Framework**: [axum](https://github.com/tokio-rs/axum) ⚡
+- **Database**: [PostgreSQL](https://www.postgresql.org/) 🐘
+- **ORM**: [sqlx](https://github.com/launchbadge/sqlx) 📊
+- **認証**: JWT + OAuth2 (Google、予定) 🔐
+- **API 仕様**: [OpenAPI](https://www.openapis.org/) ([utoipa](https://github.com/juhaku/utoipa)) 📚
 
 ### フロントエンド
 
-- **Framework**: Next.js 15+ (App Router)
-- **UI**: shadcn/ui + Tailwind CSS
-- **API クライアント**: TanStack Query + Orval
-- **フォーム**: React Hook Form + Zod
+- **Framework**: [Next.js](https://nextjs.org/) 15+ (App Router) ⚛️
+- **UI**: [shadcn/ui](https://ui.shadcn.com/) + [Tailwind CSS](https://tailwindcss.com/) 🎨
+- **API クライアント**: [TanStack Query](https://tanstack.com/query) + [Orval](https://orval.dev/) 🔄
+- **フォーム**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) 📋
 
-## プロジェクト構成
+## 📂 プロジェクト構成
 
 ```
 reddit-sample/
@@ -55,93 +67,90 @@ reddit-sample/
 └── README.md                # このファイル
 ```
 
-## 機能
-
-- ユーザー認証
-- スレッド投稿・閲覧
-- 木構造コメントシステム
-- ユーザープロフィールページ（投稿したスレッド・コメント一覧表示）
-- レスポンシブデザイン
-
-## 開発環境セットアップ
+## 🚀 開発環境セットアップ
 
 ### 必要なツール
 
-- asdf
-- Docker Compose
-- cargo-watch
-- just
+- [asdf](https://asdf-vm.com/) - バージョン管理
+- [Docker Compose](https://docs.docker.com/compose/) - コンテナ管理
+- [cargo-watch](https://crates.io/crates/cargo-watch) - Rust ホットリロード
+- [just](https://just.systems/) - タスクランナー
 
 ### インストール手順
 
-#### 事前準備
+#### 1️⃣ 事前準備
 
 ```bash
 $ asdf install
 $ cargo install cargo-watch
 ```
 
-#### バックエンド
+#### 2️⃣ バックエンド
 
 ```shell
 $ cd backend
-$ cp .env.example .env
+$ cp .env.example .env  # 環境変数を設定
 ```
 
-#### フロントエンド
+#### 3️⃣ フロントエンド
 
 ```shell
 $ cd frontend
-$ cp .env.example .env.local
-$ npm ci
+$ cp .env.example .env.local  # 環境変数を設定
+$ npm ci  # 依存関係をインストール
 ```
 
 ### 開発環境の立ち上げ
 
 ```bash
-$ just dev
+$ just dev  # バックエンドとフロントエンドの両方が起動します
 ```
 
 ### アクセス先
 
-- **フロントエンド**: http://localhost:3000
-- **バックエンド API**: http://localhost:8000
-- **OpenAPI Docs**: http://localhost:8000/swagger-ui/
-- **MailHog**: http://localhost:8025
+- 🌐 **フロントエンド**: http://localhost:3000
+- 🔌 **バックエンド API**: http://localhost:8000
+- 📘 **OpenAPI Docs**: http://localhost:8000/swagger-ui/
+- 📧 **MailHog**: http://localhost:8025
 
-## 開発ワークフロー
+## 💻 開発ワークフロー
 
 1. バックエンドで API 仕様変更
 2. OpenAPI 仕様が自動更新
 3. フロントエンドで `npm run generate-api` 実行（もしくは `npm run generate-api:watch` で自動生成）
 4. 型安全な API クライアントが再生成
 
-## 実装済み API
+## 🔍 実装済み API
 
-### ユーザー関連
+<details>
+<summary>👤 ユーザー関連</summary>
 
 - ユーザー登録・ログイン・ログアウト
-- Google OAuth 認証
 - ユーザープロフィール表示
 - ユーザーが投稿したスレッド一覧取得
 - ユーザーが投稿したコメント一覧取得
 - プロフィール編集
+</details>
 
-### スレッド関連
+<details>
+<summary>📋 スレッド関連</summary>
 
 - スレッド一覧取得
 - スレッド詳細取得
-- スレッド作成・編集・削除
+- スレッド作成・削除
+</details>
 
-### コメント関連
+<details>
+<summary>💬 コメント関連</summary>
 
 - スレッドのコメント一覧取得
-- コメント投稿・編集・削除
+- コメント投稿・削除
 - 返信コメント（ネスト構造）
+</details>
 
-## 注意事項
+## ⚠️ 注意事項
 
 - 本プロジェクトは学習・デモ用途のサンプル実装です
-- 本番環境での使用には追加のセキュリティ対策が必要です
+- 実際の運用にはセキュリティやパフォーマンスの考慮が必要です
 - 継続的に機能追加・改善を行っています
-- バグ報告や機能提案は Issue からお願いします
+- バグ報告や機能提案は [Issue](https://github.com/y-temp4/wadai-us/issues) からお願いします
