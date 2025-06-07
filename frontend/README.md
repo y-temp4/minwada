@@ -1,4 +1,4 @@
-# Reddit Clone Frontend
+# wadai-us Frontend
 
 Next.js 15 (App Router) + shadcn/ui で構築された Reddit 風サービスのフロントエンドです。
 
@@ -25,14 +25,14 @@ Next.js 15 (App Router) + shadcn/ui で構築された Reddit 風サービスの
 
 ### 1. 前提条件
 
-- Node.js (18 以上)
+- Node.js (`.tool-versions` で指定されたバージョン)
 - npm
 - バックエンド API（Rust）が起動していること
 
 ### 2. 依存関係インストール
 
 ```bash
-npm install
+npm ci
 ```
 
 ### 3. 環境変数設定

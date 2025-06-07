@@ -1,4 +1,4 @@
-# Reddit Clone Backend
+# wadai-us Backend
 
 Rust + axum で構築された Reddit 風サービスのバックエンド API です。
 
@@ -8,7 +8,7 @@ Rust + axum で構築された Reddit 風サービスのバックエンド API �
 - **フレームワーク**: axum
 - **データベース**: PostgreSQL
 - **ORM**: sqlx
-- **認証**: JWT + OAuth2 (Google)
+- **認証**: JWT + OAuth2 (Google、予定)
 - **API 仕様**: OpenAPI (utoipa)
 - **パスワードハッシュ**: argon2
 
@@ -25,7 +25,7 @@ Rust + axum で構築された Reddit 風サービスのバックエンド API �
 
 ### 1. 前提条件
 
-- Rust (1.70 以上)
+- Rust (`.tool-versions` で指定されたバージョン)
 - Docker & Docker Compose
 - PostgreSQL (Docker で起動可能)
 
@@ -116,7 +116,10 @@ Password: admin
 ### マイグレーション
 
 ```bash
-# マイグレーション実行（自動で実行されます）
+# マイグレーションツールのインストール
+cargo install sqlx-cli --no-default-features --features postgres
+
+# マイグレーション実行
 sqlx migrate run
 
 # マイグレーション作成
