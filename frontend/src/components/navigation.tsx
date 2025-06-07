@@ -27,7 +27,7 @@ export function Navigation() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="text-2xl font-bold text-orange-600">
-                Reddit Clone
+                みんなの話題(α版)
               </Link>
             </div>
 

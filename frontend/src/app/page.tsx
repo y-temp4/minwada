@@ -24,7 +24,7 @@ export default function Home() {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Reddit Clone へようこそ</CardTitle>
+            <CardTitle>みんなの話題(α版) へようこそ</CardTitle>
             <CardDescription>
               Next.js と Rust で構築されたモダンな議論プラットフォーム
             </CardDescription>
@@ -37,7 +37,7 @@ export default function Home() {
                   <li>• スレッドの作成と議論</li>
                   <li>• ネストしたコメントシステム</li>
                   <li>• ユーザー認証</li>
-                  <li>• リアルタイム更新</li>
+                  <li>• リアルタイム更新(予定)</li>
                 </ul>
               </div>
               <Separator />

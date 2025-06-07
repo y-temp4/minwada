@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -47,17 +47,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ThreadResponse } from "@/generated/schemas";
 
-export default function ThreadDetailPage() {
-  const params = useParams();
-  const threadId = params.id as string;
+type Props = {
+  initialData: ThreadResponse;
+  threadId: string; // オプションでスレッドIDを受け取る
+};
+
+export function ThreadDetailPage({ threadId, initialData }: Props) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const {
     data: thread,
     isLoading: threadLoading,
     error: threadError,
-  } = useGetThread(threadId);
+  } = useGetThread(threadId, {
+    query: {
+      initialData,
+    },
+  });
 
   const {
     data: commentsResponse,

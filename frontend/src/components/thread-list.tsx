@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useGetThreads } from "@/generated/api";
 import { Button } from "@/components/ui/button";
 import {
@@ -54,16 +54,6 @@ export function ThreadList() {
       setPage(page + 1);
     }
   };
-
-  // リスト最下部へのref
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // ページ切替時にリスト最下部へスクロール
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  }, [page]);
 
   if (isLoading) {
     return (
@@ -227,7 +217,6 @@ export function ThreadList() {
           </CardContent>
         </Card>
       )}
-      <div ref={bottomRef} />
     </div>
   );
 }
