@@ -1,10 +1,10 @@
 "use client"; // Error boundaries must be Client Components
 
 import { AlertTriangle, Home } from "lucide-react";
-import Link from "next/link";
 
 export default function GlobalError({
-  error,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  error: _error, // Error boundary receives the error object
   reset,
 }: {
   error: Error & { digest?: string };
@@ -30,11 +30,6 @@ export default function GlobalError({
               <p className="text-muted-foreground">
                 予期せぬエラーが発生しました。しばらく経ってからもう一度お試しください。
               </p>
-              {error.digest && (
-                <p className="text-xs text-muted-foreground/70 bg-muted p-2 rounded">
-                  エラーコード: {error.digest}
-                </p>
-              )}
             </div>
 
             <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
@@ -44,13 +39,14 @@ export default function GlobalError({
               >
                 もう一度試す
               </button>
-              <Link
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+              <a
                 href="/"
                 className="px-6 py-3 bg-secondary text-secondary-foreground rounded-md font-medium hover:bg-secondary/90 transition-colors flex items-center justify-center gap-2"
               >
                 <Home className="h-4 w-4" />
                 ホームに戻る
-              </Link>
+              </a>
             </div>
           </div>
         </div>
