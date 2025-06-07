@@ -76,13 +76,13 @@ dev: db-up
         if pkill -f "cargo-watch" 2>/dev/null; then
             echo "✅ Cargo Watchプロセスを終了しました"
         fi
-        # すべてのreddit-backendプロセスがあれば終了させる
-        # target/debug/reddit-backendの形式でプロセスを検索して終了
-        if pkill -f "target/debug/reddit-backend" 2>/dev/null; then
+        # すべてのbackendプロセスがあれば終了させる
+        # target/debug/wadai-us-apiの形式でプロセスを検索して終了
+        if pkill -f "target/debug/wadai-us-api" 2>/dev/null; then
             echo "✅ Rustバックエンドプロセスを終了しました"
         fi
         # 念のためプロセス名でも検索して終了
-        if pkill -f "reddit-backend" 2>/dev/null; then
+        if pkill -f "wadai-us-api" 2>/dev/null; then
             echo "✅ 追加のRustバックエンドプロセスを終了しました"
         fi
         # Next.jsを終了させる
