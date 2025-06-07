@@ -247,9 +247,9 @@ mod tests {
             .await
             .expect("Failed to get test user");
 
-        // 3文字未満の不正なユーザー名でリクエストを作成
+        // 4文字未満の不正なユーザー名でリクエストを作成
         let update_request = UpdateProfileRequest {
-            username: Some("ab".to_string()), // 2文字のユーザー名（最小は3文字必要）
+            username: Some("abc".to_string()), // 3文字のユーザー名（最小は4文字必要）
             display_name: None,
             avatar_url: None,
         };
@@ -280,8 +280,8 @@ mod tests {
             .await
             .expect("Failed to get test user");
 
-        // 51文字の長すぎるユーザー名を作成（最大は50文字）
-        let long_username = "a".repeat(51);
+        // 51文字の長すぎるユーザー名を作成（最大は30文字）
+        let long_username = "a".repeat(31);
         let update_request = UpdateProfileRequest {
             username: Some(long_username),
             display_name: None,

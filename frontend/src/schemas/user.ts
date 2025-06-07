@@ -609,11 +609,11 @@ const RESERVED_USERNAMES = [
 
 export const usernameSchema = z
   .string()
-  .min(3, "ユーザー名は3文字以上で入力してください")
-  .max(50, "ユーザー名は50文字以下で入力してください")
+  .min(4, "ユーザー名は4文字以上で入力してください")
+  .max(30, "ユーザー名は30文字以下で入力してください")
   .regex(
-    /^[a-zA-Z][a-zA-Z0-9_-]*$/,
-    "ユーザー名は英字で始まり、英数字、アンダースコア、ハイフンのみ使用できます"
+    /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/,
+    "ユーザー名は英数字で始まり、英数字、アンダースコア、ハイフンのみ使用できます"
   )
   .refine(
     (value) => !RESERVED_USERNAMES.includes(value.toLowerCase()),

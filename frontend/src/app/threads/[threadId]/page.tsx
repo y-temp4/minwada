@@ -26,7 +26,7 @@ export async function generateMetadata(
       title: thread.title,
       description: thread.content,
       openGraph: {
-        images: ["/some-specific-page-image.jpg", ...previousImages],
+        images: [...previousImages],
       },
     };
   } catch {

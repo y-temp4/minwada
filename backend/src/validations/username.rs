@@ -613,10 +613,10 @@ lazy_static! {
 }
 
 /// ユーザー名の最小長
-pub const USERNAME_MIN_LENGTH: usize = 3;
+pub const USERNAME_MIN_LENGTH: usize = 4;
 
 /// ユーザー名の最大長
-pub const USERNAME_MAX_LENGTH: usize = 50;
+pub const USERNAME_MAX_LENGTH: usize = 30;
 
 /// ユーザー名バリデーション（validator crateと連携）
 pub fn validate_username(username: &str) -> Result<(), ValidationError> {
