@@ -12,12 +12,12 @@ use super::common::PaginatedResponse;
 pub struct CreateThreadRequest {
     #[validate(length(
         min = 1,
-        max = 300,
-        message = "Title must be between 1 and 300 characters"
+        max = 50,
+        message = "Title must be between 1 and 50 characters"
     ))]
     pub title: String,
 
-    #[validate(length(max = 10000, message = "Content must be less than 10000 characters"))]
+    #[validate(length(max = 1000, message = "Content must be less than 1000 characters"))]
     pub content: Option<String>,
 }
 
@@ -25,12 +25,12 @@ pub struct CreateThreadRequest {
 pub struct UpdateThreadRequest {
     #[validate(length(
         min = 1,
-        max = 300,
-        message = "Title must be between 1 and 300 characters"
+        max = 50,
+        message = "Title must be between 1 and 50 characters"
     ))]
     pub title: Option<String>,
 
-    #[validate(length(max = 10000, message = "Content must be less than 10000 characters"))]
+    #[validate(length(max = 1000, message = "Content must be less than 1000 characters"))]
     pub content: Option<String>,
 }
 

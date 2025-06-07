@@ -34,8 +34,11 @@ const createThreadSchema = z.object({
   title: z
     .string()
     .min(1, "タイトルは必須です")
-    .max(300, "タイトルは300文字以内で入力してください"),
-  content: z.string().optional(),
+    .max(50, "タイトルは50文字以内で入力してください"),
+  content: z
+    .string()
+    .max(1000, "内容は1000文字以内で入力してください")
+    .optional(),
 });
 
 type CreateThreadForm = z.infer<typeof createThreadSchema>;

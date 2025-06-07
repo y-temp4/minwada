@@ -106,4 +106,62 @@ mod tests {
             err => panic!("Expected EmailVerificationRequired, got {:?}", err),
         }
     }
+
+    #[sqlx::test]
+    async fn test_create_thread_invalid_input(pool: PgPool) {
+        // テスト：無効な入力でスレッド作成を試みるとエラーになる
+        let user = test_utils::create_test_user(&pool, true).await;
+        let request = CreateThreadRequest {
+            title: "".to_string(), // タイトルが空
+            content: Some("This is a test thread content".to_string()),
+        };
+
+        let result = create_thread(State(pool), Extension(user), Json(request)).await;
+
+        assert!(result.is_err());
+        match result.unwrap_err() {
+            AppError::Validation(_) => (),
+            err => panic!("Expected ValidationError, got {:?}", err),
+        }
+    }
+
+    #[sqlx::test]
+    async fn test_too_long_thread_title(pool: PgPool) {
+        // テスト：タイトルが長すぎる場合のエラー
+        let user = test_utils::create_test_user(&pool, true).await;
+        let long_title = "a".repeat(51); // タイトルが256文字を超える
+
+        let request = CreateThreadRequest {
+            title: long_title,
+            content: Some("This is a test thread content".to_string()),
+        };
+
+        let result = create_thread(State(pool), Extension(user), Json(request)).await;
+
+        assert!(result.is_err());
+        match result.unwrap_err() {
+            AppError::Validation(_) => (),
+            err => panic!("Expected ValidationError, got {:?}", err),
+        }
+    }
+
+    #[sqlx::test]
+    async fn test_create_too_long_thread_content(pool: PgPool) {
+        // テスト：コンテンツが長すぎる場合のエラー
+        let user = test_utils::create_test_user(&pool, true).await;
+        let long_content = "a".repeat(1001); // コンテンツが1000文字を超える
+
+        let request = CreateThreadRequest {
+            title: "Test Thread".to_string(),
+            content: Some(long_content),
+        };
+
+        let result = create_thread(State(pool), Extension(user), Json(request)).await;
+
+        assert!(result.is_err());
+        match result.unwrap_err() {
+            AppError::Validation(_) => (),
+            err => panic!("Expected ValidationError, got {:?}", err),
+        }
+    }
 }
