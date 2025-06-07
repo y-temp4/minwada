@@ -53,10 +53,10 @@ use crate::{config::Config, routes::create_routes};
         handlers::threads::vote::vote_thread,
 
         // Comment endpoints
-        handlers::comments::get_comments,
-        handlers::comments::create_comment,
-        handlers::comments::update_comment,
-        handlers::comments::delete_comment,
+        handlers::comments::list::get_comments,
+        handlers::comments::create::create_comment,
+        handlers::comments::update::update_comment,
+        handlers::comments::delete::delete_comment,
 
         // User endpoints
         handlers::users::current_user::get_current_user,
