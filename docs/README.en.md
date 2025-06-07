@@ -3,7 +3,7 @@
 [![Rust](https://img.shields.io/badge/rust-1.87.0-orange.svg?logo=rust)](https://www.rust-lang.org)
 [![Next.js](https://img.shields.io/badge/next.js-15+-black.svg?logo=next.js)](https://nextjs.org/)
 
-[日本語の README](./README.md)
+[日本語の README](/README.md)
 
 > A Reddit-style thread and comment system sample implementation. Post topics freely and enjoy communication through comments.
 >

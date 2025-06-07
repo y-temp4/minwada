@@ -3,7 +3,7 @@
 [![Rust](https://img.shields.io/badge/rust-1.87.0-orange.svg?logo=rust)](https://www.rust-lang.org)
 [![Next.js](https://img.shields.io/badge/next.js-15+-black.svg?logo=next.js)](https://nextjs.org/)
 
-[English README](./README.en.md)
+[English README](./docs/README.en.md)
 
 > Reddit 風のスレッド・コメントシステムのサンプル実装です。自由に話題を投稿し、コメントを通じてコミュニケーションを楽しめます。
 >
