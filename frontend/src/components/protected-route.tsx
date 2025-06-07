@@ -22,7 +22,7 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
   if (loading) {
     return (
       fallback || (
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="min-h-screen flex py-12 justify-center">
           <div className="flex flex-col items-center space-y-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
             <p className="text-gray-600">認証状態を確認中...</p>

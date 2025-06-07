@@ -254,7 +254,7 @@ export default function SettingsPage() {
 
   return (
     <ProtectedRoute>
-      <div className="container max-w-4xl py-10 mx-auto">
+      <div className="container max-w-4xl py-3 mx-auto">
         <h1 className="text-3xl font-bold mb-8">アカウント設定</h1>
 
         {/* プロフィール設定セクション */}
