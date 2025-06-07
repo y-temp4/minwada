@@ -238,7 +238,7 @@ export function CreateThreadForm() {
                   <FormLabel>内容（任意）</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="スレッドの詳細を説明してください..."
+                      placeholder="スレッドの詳細を説明してください。"
                       className="min-h-[120px]"
                       {...field}
                       disabled={isPending}

@@ -65,7 +65,6 @@ function CommentItem({
   const { mutate: deleteComment } = useDeleteComment();
 
   const handleDeleteComment = () => {
-    console.log(`Deleting comment with ID: ${comment.id}`);
     deleteComment(
       { id: comment.id },
       {
@@ -127,12 +126,12 @@ function CommentItem({
   return (
     <div
       id={`comment-${comment.id}`}
-      className={`${depth > 0 ? "ml-4 sm:ml-8 mt-4" : ""}`}
+      className={`${depth > 0 ? "ml-3 sm:ml-8 mt-4" : ""}`}
     >
       <Card className="hover:shadow-sm transition-shadow py-1">
         <CardHeader className="pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
           <div className="flex items-start justify-between gap-2">
-            <div className="flex items-start space-x-2 sm:space-x-3 min-w-0 flex-1">
+            <div className="grid grid-cols-[auto_1fr] items-start gap-2 sm:gap-3">
               <Link href={`/users/${comment.user.username}`}>
                 <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
                   <AvatarFallback className="bg-blue-100 text-blue-600 text-xs sm:text-sm">
@@ -143,15 +142,15 @@ function CommentItem({
                 </Avatar>
               </Link>
               <div className="min-w-0 flex-1">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+                <div className="flex items-center space-x-2">
                   <Link
                     href={`/users/${comment.user.username}`}
                     className="font-medium text-xs sm:text-sm truncate hover:underline"
                   >
                     {displayName}
                   </Link>
-                  <div className="flex items-center space-x-1 sm:space-x-2 text-xs text-muted-foreground mt-1 sm:mt-0">
-                    <span className="hidden sm:inline">•</span>
+                  <div className="flex items-center space-x-1 sm:space-x-2 text-xs text-muted-foreground">
+                    <span>•</span>
                     <Clock className="h-3 w-3 flex-shrink-0" />
                     <span className="truncate">
                       {new Date(comment.created_at).toLocaleString("ja-JP", {

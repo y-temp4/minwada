@@ -72,11 +72,8 @@ export function ReplyCommentForm({
           onReplySuccess(response.id);
         }
       },
-      onError: (error: any) => {
-        console.error("Error creating reply:", error);
-        toast.error(
-          error?.response?.data?.message || "返信の投稿に失敗しました"
-        );
+      onError: () => {
+        toast.error("返信の投稿に失敗しました");
       },
     },
   });
@@ -148,7 +145,7 @@ export function ReplyCommentForm({
               キャンセル
             </Button>
             <Button type="submit" size="sm" disabled={isPending}>
-              <MessageSquare className="mr-2 h-3 w-3" />
+              <MessageSquare className="mr-1 h-3 w-3" />
               {isPending ? "投稿中..." : "返信を投稿"}
             </Button>
           </div>

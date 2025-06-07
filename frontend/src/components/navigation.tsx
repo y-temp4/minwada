@@ -26,12 +26,12 @@ export function Navigation() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold text-orange-600">
-                みんなの話題(α版)
+              <Link href="/" className="text-xl font-bold text-orange-600">
+                みんなの話題(α)
               </Link>
             </div>
 
-            <nav className="flex items-center space-x-4">
+            <nav className="flex items-center space-x-2">
               {isAuthenticated && user && !isEmailVerified && (
                 <AlertCircle className="h-5 w-5 text-amber-500 mr-1" />
               )}
@@ -84,13 +84,13 @@ export function Navigation() {
                 <>
                   <Link
                     href="/login"
-                    className="text-gray-600 hover:text-gray-900"
+                    className="text-gray-600 hover:text-gray-900 text-sm hover:underline"
                   >
                     ログイン
                   </Link>
                   <Link
                     href="/register"
-                    className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700"
+                    className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 text-sm"
                   >
                     新規登録
                   </Link>
