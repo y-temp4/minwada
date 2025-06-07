@@ -230,20 +230,27 @@ export function ThreadDetailPage({ threadId, initialData }: Props) {
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div className="flex flex-row sm:flex-row items-start sm:space-x-4 gap-4 flex-1 min-w-0">
-              <Avatar className="h-12 w-12 flex-shrink-0">
-                <AvatarFallback className="bg-orange-100 text-orange-600">
-                  {thread.user?.username?.charAt(0).toUpperCase() || (
-                    <User className="h-6 w-6" />
-                  )}
-                </AvatarFallback>
-              </Avatar>
+              <Link href={`/users/${thread.user.username}`}>
+                <Avatar className="h-12 w-12 flex-shrink-0">
+                  <AvatarFallback className="bg-orange-100 text-orange-600">
+                    {thread.user?.username?.charAt(0).toUpperCase() || (
+                      <User className="h-6 w-6" />
+                    )}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
               <div className="min-w-0">
                 <CardTitle className="text-2xl break-all whitespace-pre-line w-full min-w-0">
                   {thread.title}
                 </CardTitle>
                 <CardDescription className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm">
                   <span>
-                    投稿者: {thread.user?.username || "不明なユーザー"}
+                    <Link
+                      href={`/users/${thread.user.username}`}
+                      className="hover:underline"
+                    >
+                      投稿者: {thread.user.username || "不明なユーザー"}
+                    </Link>
                   </span>
                   <span className="flex items-center">
                     <Clock className="h-3 w-3 mr-1" />

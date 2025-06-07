@@ -33,6 +33,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Link from "next/link";
 
 interface CommentListProps {
   threadId: string;
@@ -132,18 +133,23 @@ function CommentItem({
         <CardHeader className="pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-start space-x-2 sm:space-x-3 min-w-0 flex-1">
-              <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
-                <AvatarFallback className="bg-blue-100 text-blue-600 text-xs sm:text-sm">
-                  {username.charAt(0).toUpperCase() || (
-                    <User className="h-3 w-3 sm:h-4 sm:w-4" />
-                  )}
-                </AvatarFallback>
-              </Avatar>
+              <Link href={`/users/${comment.user.username}`}>
+                <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
+                  <AvatarFallback className="bg-blue-100 text-blue-600 text-xs sm:text-sm">
+                    {username.charAt(0).toUpperCase() || (
+                      <User className="h-3 w-3 sm:h-4 sm:w-4" />
+                    )}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
-                  <span className="font-medium text-xs sm:text-sm truncate">
+                  <Link
+                    href={`/users/${comment.user.username}`}
+                    className="font-medium text-xs sm:text-sm truncate hover:underline"
+                  >
                     {displayName}
-                  </span>
+                  </Link>
                   <div className="flex items-center space-x-1 sm:space-x-2 text-xs text-muted-foreground mt-1 sm:mt-0">
                     <span className="hidden sm:inline">•</span>
                     <Clock className="h-3 w-3 flex-shrink-0" />
@@ -159,9 +165,12 @@ function CommentItem({
                 </div>
                 {comment.user?.username &&
                   comment.user.username !== displayName && (
-                    <div className="text-xs text-muted-foreground mt-1">
+                    <Link
+                      href={`/users/${comment.user.username}`}
+                      className="text-xs text-muted-foreground mt-1 hover:underline"
+                    >
                       @{comment.user.username}
-                    </div>
+                    </Link>
                   )}
               </div>
             </div>

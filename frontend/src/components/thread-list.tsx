@@ -121,15 +121,17 @@ export function ThreadList() {
         {threads.map((thread) => (
           <Card key={thread.id} className="hover:shadow-md transition-shadow">
             <CardHeader>
-              <div className="flex items-start justify-between">
+              <div className="flex items-start justify-between gap-2">
                 <div className="flex items-start space-x-3">
-                  <Avatar>
-                    <AvatarFallback className="bg-orange-100 text-orange-600">
-                      {thread.user?.username.charAt(0).toUpperCase() || (
-                        <User className="h-4 w-4" />
-                      )}
-                    </AvatarFallback>
-                  </Avatar>
+                  <Link href={`/users/${thread.user.username}`}>
+                    <Avatar>
+                      <AvatarFallback className="bg-orange-100 text-orange-600">
+                        {thread.user?.username.charAt(0).toUpperCase() || (
+                          <User className="h-4 w-4" />
+                        )}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Link>
                   <div>
                     <Link href={`/threads/${thread.id}`}>
                       <CardTitle className="text-lg hover:text-primary cursor-pointer hover:underline break-all">
@@ -137,12 +139,18 @@ export function ThreadList() {
                       </CardTitle>
                     </Link>
                     <CardDescription>
-                      投稿者: {thread.user.display_name || "匿名ユーザー"} •{" "}
+                      <Link
+                        href={`/users/${thread.user.username}`}
+                        className="text-muted-foreground hover:underline"
+                      >
+                        投稿者: {thread.user.display_name || "匿名ユーザー"}
+                      </Link>{" "}
+                      •{" "}
                       {new Date(thread.created_at).toLocaleDateString("ja-JP")}
                     </CardDescription>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex flex-col sm:flex-row items-center gap-1.5">
                   <Badge variant="outline" className="font-medium">
                     <ArrowBigUp className="h-3.5 w-3.5 mr-1 text-primary" />
                     {thread.upvote_count - thread.downvote_count}
