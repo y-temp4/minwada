@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const registerSchema = z
   .object({
@@ -201,6 +202,19 @@ export function RegisterForm() {
                 </FormItem>
               )}
             />
+
+            <p className="text-xs text-gray-500 mt-2 mb-8">
+              アカウントを作成することで、
+              <Link href="/terms" className="underline hover:text-blue-600">
+                利用規約
+              </Link>
+              と
+              <Link href="/privacy" className="underline hover:text-blue-600">
+                プライバシーポリシー
+              </Link>
+              に同意したものとみなされます。
+            </p>
+
             <Button
               type="submit"
               className="w-full"
