@@ -17,13 +17,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: { default: "みんなの話題", template: "%s | みんなの話題" },
-  description: "A Reddit-like discussion platform built with Next.js and Rust",
+  description: "Next.jsとRustで構築されたReddit風の掲示板プラットフォーム",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
   ),
-  twitter: {
-    card: "summary",
-  },
+  twitter: { card: "summary" },
 };
 
 export default function RootLayout({

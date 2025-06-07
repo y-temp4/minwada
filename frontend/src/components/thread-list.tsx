@@ -226,7 +226,7 @@ export function ThreadList() {
               まだスレッドがありません
             </h3>
             <p className="text-muted-foreground text-center">
-              最初の議論を始めてみませんか？
+              最初の会話を始めてみませんか？
             </p>
           </CardContent>
         </Card>

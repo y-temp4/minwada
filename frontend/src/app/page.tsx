@@ -34,8 +34,8 @@ export default function Home() {
               <div>
                 <h4 className="font-semibold">機能</h4>
                 <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                  <li>• スレッドの作成と議論</li>
-                  <li>• ネストしたコメントシステム</li>
+                  <li>• スレッドの作成とコメント</li>
+                  <li>• 木構造のコメントシステム</li>
                   <li>• ユーザー認証</li>
                   <li>• リアルタイム更新(予定)</li>
                 </ul>
@@ -44,7 +44,7 @@ export default function Home() {
               <div>
                 <h4 className="font-semibold">はじめに</h4>
                 <p className="text-sm text-gray-600 mt-2">
-                  アカウントを登録して、スレッドの作成や議論への参加を始めましょう。
+                  アカウントを登録して、スレッドの作成や会話への参加を始めましょう。
                 </p>
               </div>
             </div>

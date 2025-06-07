@@ -116,7 +116,7 @@ export function CreateThreadForm() {
             新しいスレッドを作成
           </CardTitle>
           <CardDescription>
-            コミュニティと新しい議論を始めましょう
+            コミュニティと新しい会話を始めましょう
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -150,7 +150,7 @@ export function CreateThreadForm() {
             新しいスレッドを作成
           </CardTitle>
           <CardDescription>
-            コミュニティと新しい議論を始めましょう
+            コミュニティと新しい会話を始めましょう
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -181,7 +181,7 @@ export function CreateThreadForm() {
           新しいスレッドを作成
         </CardTitle>
         <CardDescription>
-          コミュニティと新しい議論を始めましょう
+          コミュニティと新しい会話を始めましょう
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -195,7 +195,7 @@ export function CreateThreadForm() {
                   <FormLabel>タイトル</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="どんな話題について議論しますか？"
+                      placeholder="どんな話題について話しますか？"
                       {...field}
                       disabled={isPending}
                     />
