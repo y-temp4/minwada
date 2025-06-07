@@ -1,4 +1,6 @@
-# Reddit Clone Sample
+# みんなの話題
+
+[English README](./README.en.md)
 
 Reddit 風のスレッド・コメントシステムのサンプル実装です。
 （最終更新: 2025 年 6 月 6 日）

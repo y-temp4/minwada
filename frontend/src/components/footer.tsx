@@ -27,7 +27,7 @@ export default function Footer() {
             利用規約
           </a>
           <a
-            href="https://github.com/y-temp4/reddit-sample"
+            href="https://github.com/y-temp4/wadai-us"
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-500 hover:text-gray-900 text-sm transition"
