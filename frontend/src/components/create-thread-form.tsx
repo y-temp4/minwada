@@ -29,6 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, LogIn, AlertCircle } from "lucide-react";
 import { useCreateThread, getGetThreadsQueryKey } from "@/generated/api";
 import { useAuth } from "@/providers/auth-provider";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const createThreadSchema = z.object({
   title: z
@@ -101,9 +102,27 @@ export function CreateThreadForm() {
             <Plus className="h-5 w-5 mr-2" />
             新しいスレッドを作成
           </CardTitle>
+          <Skeleton className="h-5 w-3/4 mt-1" />
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8">読み込み中...</div>
+          <div className="space-y-6">
+            {/* タイトルフィールドのスケルトン */}
+            <div className="space-y-2">
+              <Skeleton className="h-[14px] w-20" />
+              <Skeleton className="h-9 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+            </div>
+
+            {/* 内容フィールドのスケルトン */}
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-[118px] w-full" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+
+            {/* ボタンのスケルトン */}
+            <Skeleton className="h-10 w-full" />
+          </div>
         </CardContent>
       </Card>
     );

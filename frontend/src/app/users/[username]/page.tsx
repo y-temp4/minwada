@@ -172,7 +172,7 @@ export default function UserProfilePage() {
                             </div>
                           </div>
                           {thread.content && (
-                            <p className="mt-2 text-gray-600 line-clamp-2 break-all">
+                            <p className="mt-2 text-gray-600 line-clamp-3 break-all">
                               {thread.content}
                             </p>
                           )}
@@ -209,11 +209,13 @@ export default function UserProfilePage() {
                         key={comment.id}
                         className="block"
                       >
-                        <div className="p-4 rounded-lg border hover:bg-gray-50 transition-colors">
+                        <div className="p-4 rounded-lg border hover:bg-gray-50 transition-colors break-all">
                           <h4 className="font-medium text-gray-900 mb-2">
                             {comment.thread_title}
                           </h4>
-                          <p className="text-gray-600">{comment.content}</p>
+                          <p className="text-gray-600 line-clamp-3">
+                            {comment.content}
+                          </p>
                           <div className="mt-2 text-xs text-gray-500">
                             {format(
                               new Date(comment.created_at),
