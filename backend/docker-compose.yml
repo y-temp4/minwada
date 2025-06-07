@@ -1,7 +1,7 @@
 services:
   # PostgreSQL Database
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     container_name: wadai_us_postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-wadai_us_db}
