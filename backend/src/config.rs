@@ -20,7 +20,7 @@ impl Config {
 
         Ok(Config {
             database_url: env::var("DATABASE_URL").unwrap_or_else(|_| {
-                "postgresql://user:password@localhost:5433/wadai_us_db".to_string()
+                "postgresql://user:password@localhost:5433/minwada_db".to_string()
             }),
             host: env::var("SERVER_HOST").unwrap_or_else(|_| "0.0.0.0".to_string()),
             port: env::var("SERVER_PORT")

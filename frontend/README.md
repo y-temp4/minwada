@@ -1,4 +1,4 @@
-# wadai-us Frontend
+# minwada Frontend
 
 Next.js 15 (App Router) + shadcn/ui で構築された Reddit 風サービスのフロントエンドです。
 

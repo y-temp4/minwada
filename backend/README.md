@@ -1,4 +1,4 @@
-# wadai-us Backend
+# minwada Backend
 
 Rust + axum で構築された Reddit 風サービスのバックエンド API です。
 

@@ -1,5 +1,5 @@
 [package]
-name = "wadai-us-api"
+name = "minwada-api"
 version = "0.1.0"
 edition = "2021"
 

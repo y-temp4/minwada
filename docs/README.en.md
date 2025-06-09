@@ -41,7 +41,7 @@
 ## 📂 Project Structure
 
 ```
-wadai-us/
+minwada/
 ├── backend/                 # Rust (axum) backend API
 │   ├── src/                 # Source code
 │   │   ├── main.rs          # Entry point
@@ -157,4 +157,4 @@ $ just dev  # Starts both backend and frontend
 - This project is a sample implementation for learning and demonstration purposes
 - Additional security measures are required for production use
 - Features are continuously being added and improved
-- Please submit bug reports and feature suggestions through [Issues](https://github.com/y-temp4/wadai-us/issues)
+- Please submit bug reports and feature suggestions through [Issues](https://github.com/y-temp4/minwada/issues)

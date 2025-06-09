@@ -24,7 +24,7 @@ pub mod jwt {
             email: email.to_string(),
             exp: expiration,
             iat: Utc::now().timestamp() as usize,
-            iss: "wadai-us".to_string(),
+            iss: "minwada".to_string(),
         };
 
         encode(

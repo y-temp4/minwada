@@ -1,26 +1,27 @@
+name: minwada_backend
 services:
   # PostgreSQL Database
   postgres:
     image: postgres:17-alpine
-    container_name: wadai_us_postgres
+    container_name: minwada_postgres
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-wadai_us_db}
+      POSTGRES_DB: ${POSTGRES_DB:-minwada_db}
       POSTGRES_USER: ${POSTGRES_USER:-user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
     ports:
       - "${POSTGRES_PORT:-5433}:5432"
     volumes:
-      - wadai_us_postgres_data:/var/lib/postgresql/data
+      - minwada_postgres_data:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d
 
   # Mailhog (for email testing in development)
   mailhog:
     image: mailhog/mailhog
-    container_name: wadai_us_mailhog
+    container_name: minwada_mailhog
     ports:
       - "${MAILHOG_PORT:-1025}:1025" # SMTP server
       - "${MAILHOG_UI_PORT:-8025}:8025" # Web UI
 
 volumes:
-  wadai_us_postgres_data:
+  minwada_postgres_data:

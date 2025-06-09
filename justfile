@@ -77,12 +77,12 @@ dev: db-up
             echo "✅ Cargo Watchプロセスを終了しました"
         fi
         # すべてのbackendプロセスがあれば終了させる
-        # target/debug/wadai-us-apiの形式でプロセスを検索して終了
-        if pkill -f "target/debug/wadai-us-api" 2>/dev/null; then
+        # target/debug/minwada-apiの形式でプロセスを検索して終了
+        if pkill -f "target/debug/minwada-api" 2>/dev/null; then
             echo "✅ Rustバックエンドプロセスを終了しました"
         fi
         # 念のためプロセス名でも検索して終了
-        if pkill -f "wadai-us-api" 2>/dev/null; then
+        if pkill -f "minwada-api" 2>/dev/null; then
             echo "✅ 追加のRustバックエンドプロセスを終了しました"
         fi
         # Next.jsを終了させる

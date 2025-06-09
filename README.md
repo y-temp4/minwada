@@ -41,7 +41,7 @@
 ## 📂 プロジェクト構成
 
 ```
-wadai-us/
+minwada/
 ├── backend/                 # Rust (axum) バックエンドAPI
 │   ├── src/                 # ソースコード
 │   │   ├── main.rs          # エントリーポイント
@@ -156,4 +156,4 @@ $ just dev  # バックエンドとフロントエンドの両方が起動しま
 - 本プロジェクトは学習・デモ用途のサンプル実装です
 - 実際の運用にはセキュリティやパフォーマンスの考慮が必要です
 - 継続的に機能追加・改善を行っています
-- バグ報告や機能提案は [Issue](https://github.com/y-temp4/wadai-us/issues) からお願いします
+- バグ報告や機能提案は [Issue](https://github.com/y-temp4/minwada/issues) からお願いします
