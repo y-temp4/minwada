@@ -2063,6 +2063,176 @@ export const useCreateComment = <TError = ErrorResponse, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 
+/**
+ * 指定されたスレッドIDに基づいてOGP画像を生成します。
+画像にはスレッドのタイトルと投稿者名が含まれます。
+ * @summary スレッドのOGP画像を生成
+ */
+export const getThreadOgpImage = (
+  threadId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<unknown>(
+    { url: `/api/threads/${threadId}/ogp.png`, method: "GET", signal },
+    options,
+  );
+};
+
+export const getGetThreadOgpImageQueryKey = (threadId: string) => {
+  return [`/api/threads/${threadId}/ogp.png`] as const;
+};
+
+export const getGetThreadOgpImageQueryOptions = <
+  TData = Awaited<ReturnType<typeof getThreadOgpImage>>,
+  TError = void,
+>(
+  threadId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getThreadOgpImage>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetThreadOgpImageQueryKey(threadId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getThreadOgpImage>>
+  > = ({ signal }) => getThreadOgpImage(threadId, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!threadId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getThreadOgpImage>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetThreadOgpImageQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getThreadOgpImage>>
+>;
+export type GetThreadOgpImageQueryError = void;
+
+export function useGetThreadOgpImage<
+  TData = Awaited<ReturnType<typeof getThreadOgpImage>>,
+  TError = void,
+>(
+  threadId: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getThreadOgpImage>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getThreadOgpImage>>,
+          TError,
+          Awaited<ReturnType<typeof getThreadOgpImage>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetThreadOgpImage<
+  TData = Awaited<ReturnType<typeof getThreadOgpImage>>,
+  TError = void,
+>(
+  threadId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getThreadOgpImage>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getThreadOgpImage>>,
+          TError,
+          Awaited<ReturnType<typeof getThreadOgpImage>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetThreadOgpImage<
+  TData = Awaited<ReturnType<typeof getThreadOgpImage>>,
+  TError = void,
+>(
+  threadId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getThreadOgpImage>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary スレッドのOGP画像を生成
+ */
+
+export function useGetThreadOgpImage<
+  TData = Awaited<ReturnType<typeof getThreadOgpImage>>,
+  TError = void,
+>(
+  threadId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getThreadOgpImage>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetThreadOgpImageQueryOptions(threadId, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
 export const getCurrentUser = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
