@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://minwada.com">
-    <img src="./images/logo.png" alt="みんなの話題" width="300">
+    <img src="./images/logo.png" alt="みんなの話題" width="300" height="300">
   </a>
 </p>
 
