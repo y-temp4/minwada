@@ -123,7 +123,7 @@ fn generate_ogp_image(title: &str, username: &str) -> Result<Vec<u8>> {
     let max_title_width = WIDTH - 200; // 左右マージン100px（枠線が太くなったため調整）
     let wrapped_title = wrap_text(title, &font, title_scale, max_title_width);
 
-    let mut y_offset = 100; // 上マージンも調整
+    let mut y_offset = 90; // 上マージンも調整
     for line in wrapped_title.iter().take(4) {
         // 最大4行
         draw_text_mut(
@@ -139,7 +139,7 @@ fn generate_ogp_image(title: &str, username: &str) -> Result<Vec<u8>> {
     }
 
     // 左下にユーザー名を描画（@マーク付き）
-    let username_scale = Scale { x: 45.0, y: 45.0 }; // フォントサイズを大きく
+    let username_scale = Scale { x: 58.0, y: 58.0 }; // フォントサイズを大きく
     let username_with_at = format!("@{}", username);
     draw_text_mut(
         &mut image,
@@ -152,7 +152,7 @@ fn generate_ogp_image(title: &str, username: &str) -> Result<Vec<u8>> {
     );
 
     // 右下に「みんなの話題」を描画
-    let brand_scale = Scale { x: 45.0, y: 45.0 }; // フォントサイズを大きく
+    let brand_scale = Scale { x: 58.0, y: 58.0 }; // フォントサイズを大きく
     let brand_text = "みんなの話題";
 
     // テキスト幅を計算して右寄せ
