@@ -63,7 +63,7 @@ pub async fn get_thread_ogp_image(
     let response = Response::builder()
         .status(StatusCode::OK)
         .header(header::CONTENT_TYPE, "image/png")
-        // .header(header::CACHE_CONTROL, "public, max-age=86400") // 24時間キャッシュ
+        .header(header::CACHE_CONTROL, "public, max-age=86400") // 24時間キャッシュ
         .body(image_data.into())
         .map_err(|_| AppError::Internal("Response build error".to_string()))?;
 
@@ -88,7 +88,7 @@ fn generate_ogp_image(title: &str, username: &str) -> Result<Vec<u8>> {
     let mut image: RgbImage = ImageBuffer::from_pixel(WIDTH, HEIGHT, background_color);
 
     // フォントを読み込み
-    let font_data = include_bytes!("../../static/fonts/NotoSansJP-Medium.ttf");
+    let font_data = include_bytes!("../../static/fonts/NotoSansJP-SemiBold.ttf");
     let font = Font::try_from_bytes(font_data as &[u8])
         .ok_or_else(|| AppError::Internal("Failed to load font".to_string()))?;
 
@@ -119,11 +119,11 @@ fn generate_ogp_image(title: &str, username: &str) -> Result<Vec<u8>> {
     );
 
     // タイトルを上部に描画（複数行対応）
-    let title_scale = Scale { x: 70.0, y: 70.0 }; // フォントサイズを大きく
+    let title_scale = Scale { x: 80.0, y: 80.0 }; // フォントサイズを大きく
     let max_title_width = WIDTH - 200; // 左右マージン100px（枠線が太くなったため調整）
     let wrapped_title = wrap_text(title, &font, title_scale, max_title_width);
 
-    let mut y_offset = 120; // 上マージンも調整
+    let mut y_offset = 100; // 上マージンも調整
     for line in wrapped_title.iter().take(4) {
         // 最大4行
         draw_text_mut(
@@ -188,43 +188,39 @@ fn generate_ogp_image(title: &str, username: &str) -> Result<Vec<u8>> {
     Ok(buffer)
 }
 
-/// テキストを指定された幅で折り返す（シンプル版）
-fn wrap_text(text: &str, _font: &Font, scale: Scale, max_width: u32) -> Vec<String> {
+fn wrap_text(text: &str, font: &Font, scale: Scale, max_width: u32) -> Vec<String> {
     let mut lines = Vec::new();
+    let mut current_line = String::new();
 
-    // 長いタイトルを固定長で分割する簡易アプローチ
-    // 日本語文字は約2バイト、英語文字は約1バイトとして概算
-    // 1行あたりの文字数を減らして4行まで対応
-    let chars_per_line = (max_width / ((scale.x as f32 / 1.5) as u32)).max(12); // 文字数を減らし、最低12文字は表示
+    for word in text.split_whitespace() {
+        let test_line = if current_line.is_empty() {
+            word.to_string()
+        } else {
+            format!("{} {}", current_line, word)
+        };
 
-    let chars: Vec<char> = text.chars().collect();
-    let mut current_pos = 0;
+        let width = text_width(font, scale, &test_line);
 
-    while current_pos < chars.len() {
-        let end_pos = (current_pos + chars_per_line as usize).min(chars.len());
+        if width <= max_width as f32 {
+            current_line = test_line;
+        } else {
+            if !current_line.is_empty() {
+                lines.push(current_line);
+            }
+            current_line = word.to_string();
+            let current_width = text_width(font, scale, &current_line);
 
-        // 単語の途中で切らないように調整（英語の場合）
-        if end_pos < chars.len() && chars[end_pos] != ' ' {
-            // 後ろに向かってスペースを探す
-            let mut space_pos = end_pos;
-            while space_pos > current_pos && chars[space_pos] != ' ' {
-                space_pos -= 1;
+            // 極端に長い単語（URLなど）は強制折り返し
+            if current_width > max_width as f32 {
+                let broken = break_long_word(&current_line, font, scale, max_width);
+                lines.extend(broken.into_iter());
+                current_line.clear();
             }
         }
+    }
 
-        let line: String = chars[current_pos..end_pos].iter().collect();
-        let trimmed_line = line.trim().to_string();
-
-        if !trimmed_line.is_empty() {
-            lines.push(trimmed_line);
-        }
-
-        current_pos = end_pos;
-
-        // スペースをスキップ
-        while current_pos < chars.len() && chars[current_pos] == ' ' {
-            current_pos += 1;
-        }
+    if !current_line.is_empty() {
+        lines.push(current_line);
     }
 
     if lines.is_empty() {
@@ -232,6 +228,37 @@ fn wrap_text(text: &str, _font: &Font, scale: Scale, max_width: u32) -> Vec<Stri
     }
 
     lines
+}
+
+/// 単語の描画幅を取得
+fn text_width(font: &Font, scale: Scale, text: &str) -> f32 {
+    font.layout(text, scale, rusttype::point(0.0, 0.0))
+        .last()
+        .map(|g| g.position().x + g.unpositioned().h_metrics().advance_width)
+        .unwrap_or(0.0)
+}
+
+/// 長い単語（URLなど）を強制的に折り返す
+fn break_long_word(word: &str, font: &Font, scale: Scale, max_width: u32) -> Vec<String> {
+    let mut result = Vec::new();
+    let mut buffer = String::new();
+
+    for c in word.chars() {
+        buffer.push(c);
+        if text_width(font, scale, &buffer) > max_width as f32 {
+            buffer.pop();
+            if !buffer.is_empty() {
+                result.push(buffer.clone());
+            }
+            buffer = c.to_string();
+        }
+    }
+
+    if !buffer.is_empty() {
+        result.push(buffer);
+    }
+
+    result
 }
 
 /// 絵文字を除去する関数
@@ -348,7 +375,7 @@ mod tests {
     #[test]
     fn test_wrap_text_テキスト折り返し() {
         // フォントデータを読み込み
-        let font_data = include_bytes!("../../static/fonts/NotoSansJP-Medium.ttf");
+        let font_data = include_bytes!("../../static/fonts/NotoSansJP-SemiBold.ttf");
         let font = Font::try_from_bytes(font_data as &[u8]).unwrap();
 
         let text = "これは非常に長いタイトルのテストです。複数行に分かれることを期待しています。";
