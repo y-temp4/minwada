@@ -30,8 +30,16 @@ export default function PrivacyPage() {
       </p>
       <h2 className="text-xl font-semibold mt-6 mb-2">5. お問い合わせ</h2>
       <p className="mb-4">
-        {/* TODO: フォームを追加 */}
-        プライバシーに関するご質問やご要望は、お問い合わせフォームよりご連絡ください。
+        プライバシーに関するご質問やご要望は、
+        <a
+          href="https://forms.gle/s98g8WZHh4X1rpPD9"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:underline"
+        >
+          お問い合わせフォーム
+        </a>
+        よりご連絡ください。
       </p>
       <p className="text-sm text-gray-400 mt-8">2025年6月7日 制定</p>
     </div>
