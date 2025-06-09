@@ -70,3 +70,8 @@ lazy_static = "1.4"
 # Time
 time = "0.3"
 backtrace-on-stack-overflow = "0.3.0"
+
+# Image Processing
+image = "0.24"
+imageproc = "0.23"
+rusttype = "0.9"

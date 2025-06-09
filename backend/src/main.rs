@@ -51,6 +51,7 @@ use crate::{config::Config, routes::create_routes};
         handlers::threads::update::update_thread,
         handlers::threads::delete::delete_thread,
         handlers::threads::vote::vote_thread,
+        handlers::threads::ogp::get_thread_ogp_image,
 
         // Comment endpoints
         handlers::comments::list::get_comments,

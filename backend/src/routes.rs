@@ -58,6 +58,7 @@ fn thread_routes(pool: PgPool) -> Router<PgPool> {
     let public_routes = Router::new()
         .route("/", get(handlers::threads::get_threads))
         .route("/{id}", get(handlers::threads::get_thread))
+        .route("/{thread_id}/ogp.png", get(handlers::threads::get_thread_ogp_image))
         .route(
             "/{thread_id}/comments",
             get(handlers::comments::get_comments),

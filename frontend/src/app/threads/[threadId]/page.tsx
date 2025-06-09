@@ -1,7 +1,7 @@
 import { getThread } from "@/generated/api";
 import { ThreadDetailPage } from "./_component";
 import { notFound } from "next/navigation";
-import { Metadata, ResolvingMetadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 
 type Props = {
   params: Promise<{
@@ -19,14 +19,38 @@ export async function generateMetadata(
     // fetch data
     const thread = await getThread(threadId);
 
-    // optionally access and extend (rather than replace) parent metadata
-    const previousImages = (await parent).openGraph?.images || [];
+    // OGP画像のURL
+    const ogpImageUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/threads/${threadId}/ogp.png`;
+
+    // サイトのURL
+    const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const threadUrl = `${siteUrl}/threads/${threadId}`;
 
     return {
       title: thread.title,
       description: thread.content,
       openGraph: {
-        images: [...previousImages],
+        title: thread.title,
+        description: thread.content || "minwadaのスレッド",
+        url: threadUrl,
+        siteName: "minwada",
+        images: [
+          {
+            url: ogpImageUrl,
+            width: 1200,
+            height: 630,
+            alt: `${thread.title} - by @${thread.user.username}`,
+          },
+        ],
+        locale: "ja_JP",
+        type: "article",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: thread.title,
+        description: thread.content || "minwadaのスレッド",
+        images: [ogpImageUrl],
+        creator: `@${thread.user.username}`,
       },
     };
   } catch {
