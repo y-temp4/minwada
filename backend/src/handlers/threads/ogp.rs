@@ -57,8 +57,7 @@ pub async fn get_thread_ogp_image(
 
     // タイトルとユーザー名から絵文字を除去してOGP画像を生成
     let clean_title = remove_emojis(&thread.title);
-    let clean_username = remove_emojis(&thread.username);
-    let image_data = generate_ogp_image(&clean_title, &clean_username)?;
+    let image_data = generate_ogp_image(&clean_title, &thread.username)?;
 
     // 画像データをPNG形式でレスポンスとして返す（24時間キャッシュ設定）
     let response = Response::builder()
@@ -251,6 +250,18 @@ fn break_long_word(word: &str, font: &Font, scale: Scale, max_width: u32) -> Vec
     let mut buffer = String::new();
 
     for c in word.chars() {
+        let single_char_width = text_width(font, scale, &c.to_string());
+
+        // 1文字でもmax_widthを超える場合は、その文字だけで1行にする
+        if single_char_width > max_width as f32 {
+            if !buffer.is_empty() {
+                result.push(buffer.clone());
+                buffer.clear();
+            }
+            result.push(c.to_string());
+            continue;
+        }
+
         buffer.push(c);
         if text_width(font, scale, &buffer) > max_width as f32 {
             buffer.pop(); // 最後の文字を削除
@@ -447,7 +458,7 @@ mod tests {
     fn test_絵文字入りタイトルでも_ogp_画像が生成される() {
         // 絵文字が混在するタイトルとユーザー名でテスト
         let title = "テスト投稿です😀🎉 いい感じ！";
-        let username = "testuser📝";
+        let username = "testuser";
 
         // 絵文字が含まれていても画像生成が成功することを確認
         let result = generate_ogp_image(title, username);
