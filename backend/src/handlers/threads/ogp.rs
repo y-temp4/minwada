@@ -35,19 +35,17 @@ pub async fn get_thread_ogp_image(
     State(pool): State<PgPool>,
     Path(thread_id): Path<Uuid>,
 ) -> Result<Response> {
-    // データベースからスレッド情報を取得（投稿者情報とコメント数も含む）
+    // データベースからスレッド情報を取得（投稿者情報も含む）
     let thread = sqlx::query_as::<_, ThreadWithUser>(
         r#"
         SELECT 
             t.id, t.title, t.content, t.created_at, t.updated_at,
             t.upvote_count, t.downvote_count,
             u.id as user_id, u.username, u.display_name as user_display_name, u.avatar_url as user_avatar_url,
-            COUNT(c.id)::bigint as comment_count
+            0::bigint as comment_count
         FROM threads t
         JOIN users u ON t.user_id = u.id
-        LEFT JOIN comments c ON t.id = c.thread_id
         WHERE t.id = $1
-        GROUP BY t.id, t.upvote_count, t.downvote_count, u.id, u.username, u.display_name, u.avatar_url
         "#
     )
     .bind(thread_id)
