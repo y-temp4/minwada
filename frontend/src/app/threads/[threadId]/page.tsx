@@ -11,7 +11,8 @@ type Props = {
 
 export async function generateMetadata(
   { params }: Props,
-  parent: ResolvingMetadata
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
     const { threadId } = await params;
@@ -77,8 +78,46 @@ export default async function Page({ params }: Props) {
 
   try {
     const initialUserData = await getThread(threadId);
+
+    const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const threadUrl = `${siteUrl}/threads/${threadId}`;
+
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: initialUserData.title,
+      description: initialUserData.content || "",
+      author: {
+        "@type": "Person",
+        name:
+          initialUserData.user.display_name || initialUserData.user.username,
+        url: `${siteUrl}/users/${initialUserData.user.username}`,
+      },
+      datePublished: initialUserData.created_at,
+      dateModified: initialUserData.updated_at,
+      url: threadUrl,
+      publisher: {
+        "@type": "Organization",
+        name: "みんなの話題",
+        url: siteUrl,
+      },
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": threadUrl,
+      },
+    };
+
     return (
-      <ThreadDetailPage threadId={threadId} initialData={initialUserData} />
+      <>
+        <script
+          type="application/ld+json"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml:
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+        <ThreadDetailPage threadId={threadId} initialData={initialUserData} />
+      </>
     );
   } catch (error) {
     if (isApiError(error) && error.status === 404) {
