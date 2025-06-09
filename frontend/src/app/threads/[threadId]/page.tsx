@@ -31,9 +31,9 @@ export async function generateMetadata(
       description: thread.content,
       openGraph: {
         title: thread.title,
-        description: thread.content || "minwadaのスレッド",
+        description: thread.content || "",
         url: threadUrl,
-        siteName: "minwada",
+        siteName: "みんなの話題",
         images: [
           {
             url: ogpImageUrl,
