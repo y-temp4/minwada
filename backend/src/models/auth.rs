@@ -112,20 +112,20 @@ pub struct Claims {
 
 // OAuth DTOs
 
-#[derive(Debug, Deserialize)]
-pub struct GoogleOAuthResponse {
-    pub id: String,
-    pub email: String,
-    pub name: String,
-    pub picture: Option<String>,
-    pub verified_email: bool,
-}
+// #[derive(Debug, Deserialize)]
+// pub struct GoogleOAuthResponse {
+//     pub id: String,
+//     pub email: String,
+//     pub name: String,
+//     pub picture: Option<String>,
+//     pub verified_email: bool,
+// }
 
-#[derive(Debug, Deserialize)]
-pub struct GoogleTokenResponse {
-    pub access_token: String,
-    pub token_type: String,
-    pub expires_in: i64,
-    pub refresh_token: Option<String>,
-    pub scope: String,
-}
+// #[derive(Debug, Deserialize)]
+// pub struct GoogleTokenResponse {
+//     pub access_token: String,
+//     pub token_type: String,
+//     pub expires_in: i64,
+//     pub refresh_token: Option<String>,
+//     pub scope: String,
+// }

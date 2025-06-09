@@ -63,7 +63,7 @@ pub struct CommentListResponse {
 pub struct CommentWithUser {
     // Comment fields
     pub id: Uuid,
-    pub thread_id: Uuid,
+    // pub thread_id: Uuid,
     pub content: String,
     pub parent_id: Option<Uuid>,
     pub created_at: DateTime<Utc>,

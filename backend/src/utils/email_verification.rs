@@ -102,23 +102,3 @@ pub async fn verify_email(token: &str, pool: &PgPool) -> Result<Uuid, AppError> 
         )),
     }
 }
-
-// ユーザーの検証状態を確認
-pub async fn is_email_verified(user_id: Uuid, pool: &PgPool) -> Result<bool, AppError> {
-    let result = sqlx::query!(
-        r#"
-        SELECT email_verified_at
-        FROM users
-        WHERE id = $1
-        "#,
-        user_id
-    )
-    .fetch_optional(pool)
-    .await
-    .map_err(|e| AppError::Database(e))?;
-
-    match result {
-        Some(user) => Ok(user.email_verified_at.is_some()),
-        None => Err(AppError::BadRequest("ユーザーが見つかりません".to_string())),
-    }
-}

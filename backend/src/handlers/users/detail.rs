@@ -38,10 +38,7 @@ pub async fn get_user_by_username(
 mod tests {
     use super::*;
     use crate::test_utils::{create_test_thread, seed_test_user};
-    use axum::{
-        extract::{Path, State},
-        response::Json,
-    };
+    use axum::extract::{Path, State};
     use sqlx::PgPool;
     use uuid::Uuid;
 

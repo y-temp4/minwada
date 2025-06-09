@@ -7,11 +7,11 @@ pub struct Config {
     pub port: u16,
     pub cors_origin: String,
     pub jwt_secret: String,
-    pub jwt_expires_in: String,
-    pub refresh_token_expires_in: String,
-    pub google_client_id: String,
-    pub google_client_secret: String,
-    pub google_redirect_uri: String,
+    // pub jwt_expires_in: String,
+    // pub refresh_token_expires_in: String,
+    // pub google_client_id: String,
+    // pub google_client_secret: String,
+    // pub google_redirect_uri: String,
 }
 
 impl Config {
@@ -29,15 +29,15 @@ impl Config {
             cors_origin: env::var("CORS_ORIGIN")
                 .unwrap_or_else(|_| "http://localhost:3000".to_string()),
             jwt_secret: env::var("JWT_SECRET").expect("JWT_SECRET must be set"),
-            jwt_expires_in: env::var("JWT_EXPIRES_IN").unwrap_or_else(|_| "15m".to_string()),
-            refresh_token_expires_in: env::var("REFRESH_TOKEN_EXPIRES_IN")
-                .unwrap_or_else(|_| "7d".to_string()),
-            google_client_id: env::var("GOOGLE_CLIENT_ID")
-                .unwrap_or_else(|_| "your-google-client-id".to_string()),
-            google_client_secret: env::var("GOOGLE_CLIENT_SECRET")
-                .unwrap_or_else(|_| "your-google-client-secret".to_string()),
-            google_redirect_uri: env::var("GOOGLE_REDIRECT_URI")
-                .unwrap_or_else(|_| "http://localhost:8000/api/auth/google/callback".to_string()),
+            // jwt_expires_in: env::var("JWT_EXPIRES_IN").unwrap_or_else(|_| "15m".to_string()),
+            // refresh_token_expires_in: env::var("REFRESH_TOKEN_EXPIRES_IN")
+            //     .unwrap_or_else(|_| "7d".to_string()),
+            // google_client_id: env::var("GOOGLE_CLIENT_ID")
+            //     .unwrap_or_else(|_| "your-google-client-id".to_string()),
+            // google_client_secret: env::var("GOOGLE_CLIENT_SECRET")
+            //     .unwrap_or_else(|_| "your-google-client-secret".to_string()),
+            // google_redirect_uri: env::var("GOOGLE_REDIRECT_URI")
+            //     .unwrap_or_else(|_| "http://localhost:8000/api/auth/google/callback".to_string()),
         })
     }
 }

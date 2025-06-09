@@ -49,18 +49,13 @@ mod tests {
     #[sqlx::test]
     async fn test_コメント削除_成功(pool: PgPool) {
         // コメント作成者による削除が成功することを確認
-        let (user_id, thread_id) = seed_test_data(&pool, "comment_delete_success").await;
+        let (_user_id, thread_id) = seed_test_data(&pool, "comment_delete_success").await;
         let user = create_test_user(&pool, true).await;
 
         // Create a comment to delete
         let comment_id = create_test_comment(&pool, user.id, thread_id, "Test comment", None).await;
 
-        let result = delete_comment(
-            State(pool.clone()),
-            Path(comment_id),
-            Extension(user),
-        )
-        .await;
+        let result = delete_comment(State(pool.clone()), Path(comment_id), Extension(user)).await;
 
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), StatusCode::NO_CONTENT);
@@ -102,14 +97,11 @@ mod tests {
         let other_user = create_test_user(&pool, true).await;
 
         // Create a comment by another user
-        let comment_id = create_test_comment(&pool, user_id, thread_id, "Other user's comment", None).await;
+        let comment_id =
+            create_test_comment(&pool, user_id, thread_id, "Other user's comment", None).await;
 
-        let result = delete_comment(
-            State(pool.clone()),
-            Path(comment_id),
-            Extension(other_user),
-        )
-        .await;
+        let result =
+            delete_comment(State(pool.clone()), Path(comment_id), Extension(other_user)).await;
 
         assert!(result.is_err());
         if let Err(AppError::NotFound) = result {
@@ -134,10 +126,18 @@ mod tests {
         let user = create_test_user(&pool, true).await;
 
         // Create parent comment
-        let parent_comment_id = create_test_comment(&pool, user.id, thread_id, "Parent comment", None).await;
+        let parent_comment_id =
+            create_test_comment(&pool, user.id, thread_id, "Parent comment", None).await;
 
         // Create child comment
-        let _child_comment_id = create_test_comment(&pool, user_id, thread_id, "Child comment", Some(parent_comment_id)).await;
+        let _child_comment_id = create_test_comment(
+            &pool,
+            user_id,
+            thread_id,
+            "Child comment",
+            Some(parent_comment_id),
+        )
+        .await;
 
         let result = delete_comment(
             State(pool.clone()),

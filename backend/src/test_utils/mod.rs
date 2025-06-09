@@ -1,6 +1,4 @@
 #[cfg(test)]
-use crate::models::User;
-#[cfg(test)]
 use chrono::Utc;
 #[cfg(test)]
 use sqlx::PgPool;

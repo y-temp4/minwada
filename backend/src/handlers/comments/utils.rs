@@ -64,7 +64,7 @@ mod tests {
     ) -> CommentWithUser {
         CommentWithUser {
             id,
-            thread_id: Uuid::new_v4(),
+            // thread_id: Uuid::new_v4(),
             user_id: Uuid::new_v4(),
             parent_id,
             content: content.to_string(),

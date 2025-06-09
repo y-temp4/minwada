@@ -17,9 +17,9 @@ pub enum AppError {
     #[error("Argon2 error: {0}")]
     Argon2(String),
 
-    #[error("OAuth error: {0}")]
-    OAuth(String),
-
+    // #[error("OAuth error: {0}")]
+    // OAuth(String),
+    //
     #[error("Validation error: {0}")]
     Validation(#[from] validator::ValidationErrors),
 
@@ -89,7 +89,7 @@ impl IntoResponse for AppError {
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "Password hashing error".to_string(),
             ),
-            AppError::OAuth(ref msg) => (StatusCode::BAD_REQUEST, msg.clone()),
+            // AppError::OAuth(ref msg) => (StatusCode::BAD_REQUEST, msg.clone()),
             AppError::Validation(ref errors) => {
                 let validation_errors: Vec<String> = errors
                     .field_errors()
