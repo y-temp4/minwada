@@ -217,6 +217,7 @@ export function CreateThreadForm() {
                   <FormLabel>タイトル</FormLabel>
                   <FormControl>
                     <Input
+                      className="md:text-md"
                       placeholder="どんな話題について話しますか？"
                       {...field}
                       disabled={isPending}
